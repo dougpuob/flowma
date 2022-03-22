@@ -21,6 +21,15 @@ class cmdparser():
         # subcommand `check`
         subcmd_check = subparsers.add_parser('check', parents = [parent_parser], help='')
 
+        # subcommand `gitlab`
+        subcmd_gitlab = subparsers.add_parser('gitlab', parents = [parent_parser], help='')
+        subcmd_gitlab.add_argument('--register', action='store_true')
+        subcmd_gitlab.add_argument('--resume'  , action='store_true')
+        subcmd_gitlab.add_argument('--list'    , action='store_true')
+        subcmd_gitlab.add_argument('-T', '--token', type=str)
+        subcmd_gitlab.add_argument('-E', '--executor', choices=['docker', 'shell'])
+        subcmd_gitlab.add_argument('-C', '--compiler', choices=['gcc', 'clang', 'vc2017', 'vc2019', 'vc2022'])
+
 
         # ---------------------------------------------------------------------
         # Flow commands
@@ -29,8 +38,8 @@ class cmdparser():
         # subcommand `config`
         subcmd_config = subparsers.add_parser('config', parents = [parent_parser], help='')
         subcmd_config.add_argument('-D',  '--debug', action='store_true')
-        subcmd_config.add_argument('-BS', '--buildsystem',  choices=['ninja', 'msbuild', 'xcode', 'makefiles'])
-        subcmd_config.add_argument('-C',  '--compiler',  choices=['gcc', 'clang', 'vc2017', 'vc2019', 'vc2022'])
+        subcmd_config.add_argument('-BS', '--buildsystem', choices=['ninja', 'msbuild', 'xcode', 'makefiles'])
+        subcmd_config.add_argument('-C',  '--compiler', choices=['gcc', 'clang', 'vc2017', 'vc2019', 'vc2022'])
 
         # subcommand `lint`
         subcmd_lint = subparsers.add_parser('lint', parents = [parent_parser], help='')
@@ -40,8 +49,8 @@ class cmdparser():
         # subcommand `build`
         subcmd_build = subparsers.add_parser('build', parents = [parent_parser], help='')
         subcmd_build.add_argument('-D',  '--debug', action='store_true')
-        subcmd_build.add_argument('-BS', '--buildsystem',  choices=['ninja', 'msbuild', 'xcode', 'makefiles'])
-        subcmd_build.add_argument('-C',  '--compiler',  choices=['gcc', 'clang', 'vc2017', 'vc2019', 'vc2022'])
+        subcmd_build.add_argument('-BS', '--buildsystem', choices=['ninja', 'msbuild', 'xcode', 'makefiles'])
+        subcmd_build.add_argument('-C',  '--compiler', choices=['gcc', 'clang', 'vc2017', 'vc2019', 'vc2022'])
 
         # subcommand `pack`
         subcmd_pack = subparsers.add_parser('pack', parents = [parent_parser], help='')
