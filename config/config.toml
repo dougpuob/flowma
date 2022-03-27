@@ -1,0 +1,36 @@
+[Layout]
+MustExist = [
+	"/source",
+	"/config",
+	"/script",	
+	"/source",
+	"/test",
+	"/.gitignore",
+	"/flowma.py",
+	"README.md",
+]
+MustDontExist = [
+	"/Build*",
+	"/build*"
+]
+
+
+[CopyrightNotice]
+Format=true
+Content="""/* Copyright (C) 1883 Thomas Edison - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the XYZ license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the XYZ license with
+ * this file. If not, please write to: , or visit :
+ */
+"""
+
+
+[Encoding]
+Type = "UTF8"                    # "ASCII", 
+                                 # "UTF8", "UTF8BOM", 
+                                 # "UTF16", "UTF16BE", "UTF16LE",
+                                 # "UTF32BE","UTF32LE"
+Exts = ["*.h", "*.cpp", "*.c"]
