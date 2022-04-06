@@ -1,0 +1,27 @@
+FROM mcr.microsoft.com/windows:20H2
+
+
+# Change working direcotry.
+WORKDIR "C:\Temp"
+
+
+RUN powershell -c " `
+    Set-ExecutionPolicy Bypass -Scope Process -Force; `
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')); `
+    "
+
+
+RUN powershell -c " `
+    $Env:Path = @($Env:Path, `
+                 'C:\ProgramData\chocolatey\bin', `
+                 'C:\Program Files\PowerShell\7') -Join ";" `
+    "
+
+
+# Install Chocolatey software package mananger.
+RUN powershell -c "choco install -y pwsh"
+
+
+# Recover working directory to the root.
+WORKDIR "/"

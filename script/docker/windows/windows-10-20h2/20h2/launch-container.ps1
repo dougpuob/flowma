@@ -1,0 +1,1 @@
+& docker run -it gli-mars/windows-10-20h2:latest
