@@ -1,0 +1,13 @@
+FROM dougpuob/windows-10-20h2:latest
+
+
+# Change working direcotry.
+WORKDIR "C:\Temp"
+
+
+# Install essential utilities
+RUN choco install -y visualstudio2022buildtools --allWorkloads
+
+
+# Recover working directory to the root.
+WORKDIR "/"

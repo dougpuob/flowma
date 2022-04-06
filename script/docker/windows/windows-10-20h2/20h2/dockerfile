@@ -5,22 +5,37 @@ FROM mcr.microsoft.com/windows:20H2
 WORKDIR "C:\Temp"
 
 
-RUN powershell -c " `
-    Set-ExecutionPolicy Bypass -Scope Process -Force; `
-    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
-    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')); `
+# Install Chocolatey (Windows software package manager)
+RUN powershell -c " \
+    Set-ExecutionPolicy Bypass -Scope Process -Force; \
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; \
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')); \
     "
 
 
-RUN powershell -c " `
-    $Env:Path = @($Env:Path, `
-                 'C:\ProgramData\chocolatey\bin', `
-                 'C:\Program Files\PowerShell\7') -Join ";" `
-    "
+# Install essential utilities
+RUN choco install -y pwsh --version 7.2.2
+RUN choco install -y python --version 3.10.4
+RUN choco install -Y git --version 2.35.1.2 --installargs "/NoGuiHereIntegration"
+RUN choco install -Y wget --version 1.21.1.20210323
+RUN choco install -Y curl --version 7.78.0
+RUN choco install -Y aria2 --version 1.36.0
+RUN choco install -Y 7zip --version 19.0
 
 
-# Install Chocolatey software package mananger.
-RUN powershell -c "choco install -y pwsh"
+# Install PIP for Pyton
+RUN powershell -c " \
+        $env:Path = [System.Environment]::GetEnvironmentVariable('Path', 'Machine') ;\
+        python -m pip install --upgrade pip ;\
+        "
+
+
+# Setup global environment variables
+RUN powershell -c " \
+    $Env:Path = @($Env:Path, \
+                 'C:\ProgramData\chocolatey\bin', \
+                 'C:\Program Files\PowerShell\7') \
+				 -Join ';' "
 
 
 # Recover working directory to the root.
