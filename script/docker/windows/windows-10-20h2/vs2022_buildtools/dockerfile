@@ -6,8 +6,8 @@ WORKDIR "C:\Temp"
 
 
 # Install essential utilities
-RUN choco install -y visualstudio2022buildtools --allWorkloads
-
+#RUN choco install -y visualstudio2022buildtools
+RUN choco install -y visualstudio2022buildtools --package-parameters "--allWorkloads --includeRecommended --includeOptional --passive --locale en-US --Force"
 
 # Recover working directory to the root.
 WORKDIR "/"
