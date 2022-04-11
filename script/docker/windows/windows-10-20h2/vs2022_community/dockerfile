@@ -5,8 +5,13 @@ FROM dougpuob/windows-10-20h2:latest
 WORKDIR "C:\Temp"
 
 
-# Install essential utilities
-RUN choco install -y visualstudio2022community --package-parameters "--allWorkloads --includeRecommended --includeOptional --passive --locale en-US --Force"
+# Download installers
+ADD "https://c2rsetup.officeapps.live.com/c2r/downloadVS.aspx?sku=community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030" "C:\Temp\vs_community.exe"
+
+
+# Install Visual Studio 2022
+RUN start /wait C:\Temp\vs_community.exe --quiet --norestart --nocache --wait --all
+
 
 # Recover working directory to the root.
 WORKDIR "/"

@@ -1,1 +1,1 @@
-& docker run -it dougpuob/vs2022_buildtools:latest
+& docker run -it dougpuob/vs2022_community:latest
