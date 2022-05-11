@@ -5,46 +5,46 @@ import json
 import datetime
 import os
 
-from src.cmdparser import cmdparser
+from source.flowma.cmdparser import command_parser
 
 
 class flowma():
 
 
     def __init__(self):
-        self.cmd = cmdparser()
-        self.args = cmd.get_parsed_args()
+        self.cmd_parser = command_parser()
+        self.args = self.cmd_parser.get_parsed_args()
 
 
-    def main():
-        if 'config' == args.command:
+    def main(self):
+        if 'config' == self.args.command:
             pass
 
 
-        elif 'lint' == args.command:
+        elif 'lint' == self.args.command:
             pass
 
 
-        elif 'build' == args.command:
+        elif 'build' == self.args.command:
             pass
 
 
-        elif 'pack' == args.command:
+        elif 'pack' == self.args.command:
             pass
 
 
-        elif 'score' == args.command:
+        elif 'score' == self.args.command:
             pass
 
 
-        elif 'upload' == args.command:
+        elif 'upload' == self.args.command:
             pass
 
 
         else:
-            cmdarg.print_help()
-
+            self.cmd_parser.print_help()
 
 
 if __name__ == '__main__':
     flowma.main()
+

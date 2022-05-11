@@ -2,7 +2,7 @@
 import argparse
 
 
-class cmdparser():
+class command_parser():
     def __init__(self):
 
         parent_parser = argparse.ArgumentParser(add_help=False)
