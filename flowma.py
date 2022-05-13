@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import json
-import datetime
-import os
 
 from source.flowma.cmdparser import command_parser
 
@@ -46,5 +43,20 @@ class flowma():
 
 
 if __name__ == '__main__':
-    flowma.main()
+
+
+    prefix = '[%(asctime)s][%(levelname)s] %(message)s'
+    format = logging.Formatter(prefix, datefmt='%H:%M:%S')
+    screen = logging.StreamHandler()
+    screen.setFormatter(format)
+    logger = logging.getLogger()
+    logger.addHandler(screen)
+    logger.setLevel(logging.INFO)
+
+
+    flowma().main()
+
+
+    logger.info('sadfsafdsafsadf')
+    logger.error('sadfsafdsafsadf')
 

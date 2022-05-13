@@ -39,3 +39,4 @@ class os_helper():
     def is_macos(self, osk: os_kind):
         return osk.value >= os_kind.macos.value or \
                osk.value < os_kind.macos_max.value
+
