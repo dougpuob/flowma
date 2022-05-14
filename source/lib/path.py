@@ -141,3 +141,22 @@ class osdp_path():
             pass
 
         return ret
+
+    def explore_dir(self, root_path, ext_name_list: list = [], recurs: bool = False) -> list:
+        found_list: list = []
+        root_path = os.path.abspath(root_path)
+        for dirname, subdir_list, file_list in os.walk(root_path, topdown=False):
+            for file in file_list:
+                if len(ext_name_list) > 0:
+                    for ext_name in ext_name_list:
+                        if file.endswith(ext_name):
+                            abspath = os.path.join(root_path, dirname, file)
+                            normpath = os.path.normpath(abspath)
+                            found_list.append(normpath)
+                            break
+                else:
+                    abspath = os.path.join(root_path, dirname, file)
+                    normpath = os.path.normpath(abspath)
+                    found_list.append(normpath)
+
+        return found_list
