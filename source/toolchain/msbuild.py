@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
-import json
+
+from numpy import uint
 
 from ..lib.define import msvc_edition, msvc_version, config
 from ..lib.path import osdp_path
@@ -10,6 +11,22 @@ from ..lib.execute import process, result
 
 
 class msvc_information():
+    #
+    # Official information (vswhere.exe)
+    #
+    installationPath: str    # C:\Program Files\Microsoft Visual Studio\2022\Community
+    productLineVersion: int  # 2022
+    buildVersion: str        # 17.1.32210.238
+    displayName: str         # Visual Studio Community 2022
+    productPath: str         # C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe
+
+    instanceId: str          # f6176bb6
+    installDate: str         # 2021-12-03T12:49:31Z
+    productId: str           # Microsoft.VisualStudio.Product.Community
+
+    #
+    # Customized information
+    #
     version: msvc_version
     edition: msvc_edition
     rootdir: str
