@@ -21,7 +21,7 @@
   - Template
   - Never
   - File
-	- Folder
+  - Folder
 
 - SourceCode
   - Copyright
