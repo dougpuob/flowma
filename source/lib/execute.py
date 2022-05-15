@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import locale
 import logging
 import subprocess
 
@@ -35,14 +36,15 @@ class process():
                                          shell=True,
                                          cwd=workdir)
             try:
+                loc = locale.getlocale()
                 outs, errs = self.proc.communicate(timeout)
 
-                stdout = outs.decode('utf-8', errors="ignore")
+                stdout = outs.decode(loc[-1])
                 stdout = stdout.replace('\r', '')
                 stdout_lines = stdout.split('\n')
                 ret.stdout.extend(stdout_lines)
 
-                stderr = errs.decode('utf-8', errors="ignore")
+                stderr = errs.decode(loc[-1])
                 stdout = stderr.replace('\r', '')
                 stderr_lines = stderr.split('\n')
                 ret.stderr.extend(stderr_lines)
