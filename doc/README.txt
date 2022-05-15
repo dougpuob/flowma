@@ -1,6 +1,4 @@
-
-
-## Flows
+## flowma
 
 - C++
   Clear -> Config -> Lint -> Build -> Pack -> Test -> Score -> Upload
@@ -30,9 +28,9 @@
 
 - Encoding
   - Ext
-	  - *.h
+    - *.h
     - *.c
-	  - *.cpp
+    - *.cpp
   - Type
     - ASCII
     - UTF8
@@ -46,7 +44,7 @@
 - Config
   - Git
     - .gitignore
-	  - .gitmodules
+    - .gitmodules
 
   - CI
 
@@ -57,7 +55,7 @@
     - Npm
     - Conan
       - conanfile.py
-	    - conanfile.txt
+      - conanfile.txt
 
   - Linter
     - LLVM
@@ -67,7 +65,7 @@
 - Report
   - Linter
     - ClangTidy
-	  - ClangFormat
+    - ClangFormat
 
   - Testing
     - GoogleTest
@@ -75,7 +73,7 @@
 
   - Package
     - Conan
-	  - Npm
+    - Npm
 
   - GeneratedBinary
-	  - AntiVirus
+    - AntiVirus
