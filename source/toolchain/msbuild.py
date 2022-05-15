@@ -60,20 +60,20 @@ class msvc_information():
             self.version = msvc_version.vs2015
 
 
-class msvc_vcvars():
+class msbuild():
     msvc_info_list: list
 
-    logger = None
-    logfmt: logger_format
-    exec: process
-    path: osdp_path
-    vswhere: str
+    _logger = None
+    _logfmt: logger_format
+    _exec: process
+    _path: osdp_path
+    _vswhere: str
 
     def __init__(self) -> None:
-        self.logfmt = logger_format()
-        self.exec = process()
-        self.path = osdp_path()
-        self.vswhere = r'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
+        self._logfmt = logger_format()
+        self._exec = process()
+        self._path = osdp_path()
+        self._vswhere = r'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
 
         msvc_info_list = self._find_msvc()
         self.msvc_info_list = self._find_vcvars(msvc_info_list)
@@ -86,7 +86,7 @@ class msvc_vcvars():
     def _find_msvc(self):
         msvc_info_list: list = []
 
-        retrs: result = self.exec.run(self.vswhere, ['-format', 'json'])
+        retrs: result = self._exec.run(self._vswhere, ['-format', 'json'])
         if 0 == retrs.errcode:
             data = config().toCLASS(str(' '.join(retrs.stdout)))
             for item in data:
@@ -103,19 +103,19 @@ class msvc_vcvars():
 
                 msvc_info_list.append(msvc_info)
 
-                textfmt = self.logfmt.blue('productPath')
+                textfmt = self._logfmt.blue('productPath')
                 logger.info(textfmt + '={0}'.format(msvc_info.productPath))
 
-                textfmt = self.logfmt.blue('displayName')
+                textfmt = self._logfmt.blue('displayName')
                 logger.info(textfmt + '={0}'.format(msvc_info.displayName))
 
-                textfmt = self.logfmt.blue('buildVersion')
+                textfmt = self._logfmt.blue('buildVersion')
                 logger.info(textfmt + '={0}'.format(msvc_info.buildVersion))
 
-                textfmt = self.logfmt.blue('productLineVersion')
+                textfmt = self._logfmt.blue('productLineVersion')
                 logger.info(textfmt + '={0}'.format(msvc_info.productLineVersion))
 
-                textfmt = self.logfmt.blue('installationPath')
+                textfmt = self._logfmt.blue('installationPath')
                 logger.info(textfmt + '={0}'.format(msvc_info.installationPath))
 
         return msvc_info_list
@@ -138,7 +138,7 @@ class msvc_vcvars():
                     found_count += len(item.vcvars_files)
 
             for vcvar_file in item.vcvars_files:
-                file_field = self.logfmt.blue('File')
+                file_field = self._logfmt.blue('File')
                 logger.info(file_field + '={0}'.format(vcvar_file))
 
         return msvc_info_list
@@ -147,7 +147,7 @@ class msvc_vcvars():
         dirname = os.path.dirname(vcvarsbat_loc)
         basename = os.path.basename(vcvarsbat_loc)
         command = basename + "&&set"
-        retrs: result = self.exec.run(command, [], workdir=dirname)
+        retrs: result = self._exec.run(command, [], workdir=dirname)
         jsondata = {}
         if 0 == retrs.errcode:
             data = "\n".join(retrs.stdout)

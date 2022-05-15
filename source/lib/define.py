@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import platform
 
 from enum import Enum
 from types import SimpleNamespace
@@ -92,6 +93,17 @@ class os_helper():
 
     def __init__(self):
         pass
+
+    def get_oskind(self) -> os_kind:
+        os_system = platform.system()
+        if 'Windows' == os_system:
+            return os_kind.windows
+        elif 'Linux' == os_system:
+            return os_kind.linux
+        elif 'Darwin' == os_system:
+            return os_kind.macos
+        else:
+            return os_kind.unknown
 
     def is_windows(self, osk: os_kind):
         return osk.value >= os_kind.windows.value or \
