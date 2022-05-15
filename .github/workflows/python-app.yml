@@ -30,8 +30,8 @@ jobs:
         pip install psutil
         pip install pytest-cov
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        apt-get --yes install ninja-build
-        apt-get --yes install cmake
+        sudo apt-get --yes install ninja-build
+        sudo apt-get --yes install cmake
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
