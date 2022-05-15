@@ -40,7 +40,10 @@ class test_msbuild(unittest.TestCase):
         self.assertEqual(os.path.exists(self.hellocamke_builddir), False)
 
         proc: process = process()
+
         vcvars_env = None
+        output = os.path.join(self.hellocamke_builddir,
+                              'hello_cmake')
 
         if os_helper().get_oskind().value == os_kind.windows.value:
             msbld: msbuild = msbuild()
@@ -50,6 +53,7 @@ class test_msbuild(unittest.TestCase):
             msvc_info = supported_msvc_list[0]
             vcvars_env = msbld.dump_vcvars(msvc_info.edition,
                                            msvc_info.version)
+            output += '.exe'
 
         retrs: result = proc.run('cmake',
                                  ['-G', 'Ninja',
@@ -63,9 +67,6 @@ class test_msbuild(unittest.TestCase):
                                  workdir=self.hellocamke_projroot,
                                  env=vcvars_env)
         self.assertEqual(retrs.errcode, 0)
-
-        output = os.path.join(self.hellocamke_builddir,
-                              'hello_cmake.exe')
         self.assertEqual(os.path.exists(output), True)
 
         retrs: result = proc.run(output)
