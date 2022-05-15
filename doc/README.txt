@@ -13,16 +13,16 @@
 
 - JavaScript
   Clear -> Lint -> Pack -> Test -> Score -> Upload
-  
-  
-  
+
+
+
 ## Score
 
 - Layout
   - Schema
   - Template
   - Never
-    - File
+  - File
 	- Folder
 
 - SourceCode
@@ -30,9 +30,9 @@
 
 - Encoding
   - Ext
-	- *.h
+	  - *.h
     - *.c
-	- *.cpp	
+	  - *.cpp
   - Type
     - ASCII
     - UTF8
@@ -46,18 +46,18 @@
 - Config
   - Git
     - .gitignore
-	- .gitmodules
-	
+	  - .gitmodules
+
   - CI
-  
+
   - Toolchain
     - CMake
-	
+
   - Package
     - Npm
     - Conan
       - conanfile.py
-	  - conanfile.txt
+	    - conanfile.txt
 
   - Linter
     - LLVM
@@ -67,15 +67,15 @@
 - Report
   - Linter
     - ClangTidy
-	- ClangFormat
-	
+	  - ClangFormat
+
   - Testing
     - GoogleTest
     - PyTest
 
   - Package
     - Conan
-	- Npm
-	
+	  - Npm
+
   - GeneratedBinary
-	- AntiVirus
+	  - AntiVirus
