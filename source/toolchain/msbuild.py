@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
 import os
-
-from numpy import uint
+import re
 
 from ..lib.define import msvc_edition, msvc_version, config
 from ..lib.path import osdp_path
@@ -25,34 +25,55 @@ class msvc_information():
     productId: str           # Microsoft.VisualStudio.Product.Community
 
     #
-    # Customized information
+    # display name information
     #
-    version: msvc_version
     edition: msvc_edition
-    rootdir: str
-    vcvars_files: list
+    version: msvc_version
 
-    def __init__(self, ver, edi, rootdir) -> None:
-        self.version = ver,
-        self.edition = edi
-        self.rootdir = rootdir
+    subdir_list: list
+    vcvars_files: list
+    vcvars_jsons: list
+
+    def __init__(self, display_name: str) -> None:
         self.vcvars_files = []
+        self.subdir_list = []
+        self.vcvars_jsons = []
+        self.displayName = display_name.strip()
+        display_name = self.displayName.lower()
+
+        if display_name.find('community') >= 0:
+            self.version = msvc_edition.community
+        elif display_name.find('buildtools') >= 0:
+            self.version = msvc_edition.buildtools
+        elif display_name.find('professional') >= 0:
+            self.version = msvc_edition.professional
+        elif display_name.find('enterprise') >= 0:
+            self.version = msvc_edition.enterprise
+
+        if display_name.find('2022') >= 0:
+            self.version = msvc_version.vs2022
+        elif display_name.find('2019') >= 0:
+            self.version = msvc_version.vs2019
+        elif display_name.find('2017') >= 0:
+            self.version = msvc_version.vs2017
+        elif display_name.find('2015') >= 0:
+            self.version = msvc_version.vs2015
 
 
 class vcvars():
-    msvc_list_default = []
-    msvc_list_customized = []
+    msvc_info_list: list
+
     logger = None
     logfmt: logger_format
     exec: process
+    path: osdp_path
 
     def __init__(self) -> None:
         self.logfmt = logger_format()
         self.exec = process()
+        self.path = osdp_path()
 
-        #
         # Visual Studio 2022
-        #
         # C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\vsdevcmd\ext\vcvars.bat
         # C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\vsdevcmd\ext\vcvars\vcvars140.bat
         # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat
@@ -60,125 +81,57 @@ class vcvars():
         # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat
         # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsamd64_x86.bat
         # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsx86_amd64.bat
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2022,
-                msvc_edition.enterprise,
-                r'C:\Program Files\Microsoft Visual Studio\2022\BuildTools'))
 
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2022,
-                msvc_edition.community,
-                r'C:\Program Files\Microsoft Visual Studio\2022\Community'))
-
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2022,
-                msvc_edition.professional,
-                r'C:\Program Files\Microsoft Visual Studio\2022\Professional'))
-
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2022,
-                msvc_edition.enterprise,
-                r'C:\Program Files\Microsoft Visual Studio\2022\Enterprise'))
-
-        # vs2019
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2019,
-                msvc_edition.enterprise,
-                r'C:\Program Files\Microsoft Visual Studio\2019\BuildTools'))
-
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2019,
-                msvc_edition.community,
-                r'C:\Program Files\Microsoft Visual Studio\2019\Community'))
-
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2019,
-                msvc_edition.professional,
-                r'C:\Program Files\Microsoft Visual Studio\2019\Professional'))
-
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2019,
-                msvc_edition.enterprise,
-                r'C:\Program Files\Microsoft Visual Studio\2019\Enterprise'))
-
-        # vs2017
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2017,
-                msvc_edition.community,
-                r'C:\Program Files\Microsoft Visual Studio\2017\Community'))
-
-        self.msvc_list_default.append(
-            msvc_information(
-                msvc_version.vs2017,
-                msvc_edition.professional,
-                r'C:\Program Files\Microsoft Visual Studio\2017\Professional'))
-
-        self.msvc_list_default.append(
-            msvc_information
-            (msvc_version.vs2017,
-             msvc_edition.enterprise,
-             r'C:\Program Files\Microsoft Visual Studio\2017\Enterprise'))
-
-        self._find_default_vcvars()
-        self._find_msvc()
-
-    def find_vcvars(self,
-                    msvc_ver: msvc_version = msvc_version.vs2019,
-                    msvc_edi: msvc_edition = msvc_edition.community) -> int:
-
-        for item in self.msvc_list_default:
-            item: msvc_information = item
-            if msvc_edi == item.edition or\
-               msvc_ver == item.version:
-                return item
-        return None
-
-    def add_msvc_info(self, new_msvc_info: msvc_information) -> int:
-        self.msvc_list_customized.append(new_msvc_info)
+        msvc_info_list = self._find_msvc()
+        self.msvc_info_list = self._find_vcvars(msvc_info_list)
+        for msvc_info in self.msvc_info_list:
+            msvc_info: msvc_information = msvc_info
+            for vcvar_file in msvc_info.vcvars_files:
+                jsondata = self._dump_vcvars(vcvar_file)
+                msvc_info.vcvars_jsons.append(jsondata)
 
     def _find_msvc(self):
+        msvc_info_list: list = []
+
         vswhere_loc = r'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
         retrs: result = self.exec.run(vswhere_loc, ['-format', 'json'])
         if 0 == retrs.errcode:
-            data = str(' '.join(retrs.stdout))
-            dataobj = config().toCLASS(data)
-            for item in dataobj:
-                textfmt = self.logfmt.blue('installationPath')
-                logger.info(textfmt + '={0}'.format(item.installationPath))
+            data = config().toCLASS(str(' '.join(retrs.stdout)))
+            for item in data:
+                msvc_info = msvc_information(item.displayName)
 
-                textfmt = self.logfmt.blue('productLineVersion')
-                logger.info(textfmt + '={0}'.format(item.catalog.productLineVersion))
+                msvc_info.productPath = item.productPath
+                msvc_info.displayName = item.displayName
+                msvc_info.buildVersion = item.catalog.buildVersion
+                msvc_info.productLineVersion = item.catalog.productLineVersion
+                msvc_info.installationPath = item.installationPath
 
-                textfmt = self.logfmt.blue('buildVersion')
-                logger.info(textfmt + '={0}'.format(item.catalog.buildVersion))
+                # msvc_info.subdir_list.append(os.path.join(msvc_info.installationPath, r'Common7\Tools\vsdevcmd\ext'))
+                msvc_info.subdir_list.append(os.path.join(msvc_info.installationPath, r'VC\Auxiliary\Build'))
 
-                textfmt = self.logfmt.blue('displayName')
-                logger.info(textfmt + '={0}'.format(item.displayName))
+                msvc_info_list.append(msvc_info)
 
                 textfmt = self.logfmt.blue('productPath')
-                logger.info(textfmt + '={0}'.format(item.productPath))
+                logger.info(textfmt + '={0}'.format(msvc_info.productPath))
 
+                textfmt = self.logfmt.blue('displayName')
+                logger.info(textfmt + '={0}'.format(msvc_info.displayName))
 
-    def _find_customized_vcvars(self) -> int:
-        self._find_vcvars(self.msvc_list_customized)
+                textfmt = self.logfmt.blue('buildVersion')
+                logger.info(textfmt + '={0}'.format(msvc_info.buildVersion))
 
-    def _find_default_vcvars(self) -> int:
-        self._find_vcvars(self.msvc_list_default)
+                textfmt = self.logfmt.blue('productLineVersion')
+                logger.info(textfmt + '={0}'.format(msvc_info.productLineVersion))
+
+                textfmt = self.logfmt.blue('installationPath')
+                logger.info(textfmt + '={0}'.format(msvc_info.installationPath))
+
+        return msvc_info_list
 
     def _find_vcvars(self, msvc_info_list: list):
         found_count: int = 0
 
-        subdir1 = r'Common7\Tools\vsdevcmd\ext'
-        subdir2 = r'VC\Auxiliary\Build'
+        pattern = r'vcvars[\S|_]+\d+'
 
         path = osdp_path()
 
@@ -186,21 +139,28 @@ class vcvars():
             item: msvc_information = item
             item.vcvars_files.clear()
 
-            path1 = os.path.join(item.rootdir, subdir1)
-            path2 = os.path.join(item.rootdir, subdir2)
+            for subdir in item.subdir_list:
+                if path.exist(subdir):
+                    file_list1 = path.explore_dir_re(subdir, ['.bat'], pattern)
+                    item.vcvars_files.extend(file_list1)
+                    found_count += len(item.vcvars_files)
 
-            if path.exist(path1):
-                file_list1 = path.explore_dir(path1, ['.bat'], 'vcvar')
-                item.vcvars_files.extend(file_list1)
-                found_count += len(item.vcvars_files)
-                for vcvar_file in file_list1:
-                    file_field = self.logfmt.blue('File')
-                    logger.info(file_field + '={0}'.format(vcvar_file))
+            for vcvar_file in item.vcvars_files:
+                file_field = self.logfmt.blue('File')
+                logger.info(file_field + '={0}'.format(vcvar_file))
 
-            if path.exist(path2):
-                file_list2 = path.explore_dir(path2, ['.bat'], 'vcvar')
-                item.vcvars_files.extend(file_list2)
-                found_count += len(item.vcvars_files)
+        return msvc_info_list
 
-        return found_count
-
+    def _dump_vcvars(self, vcvarsbat_loc):
+        dirname = os.path.dirname(vcvarsbat_loc)
+        basename = os.path.basename(vcvarsbat_loc)
+        command = basename + "&&set"
+        retrs: result = self.exec.run(command, [], workdir=dirname)
+        jsondata = {}
+        if 0 == retrs.errcode:
+            data = "\n".join(retrs.stdout)
+            regex = re.compile(r'^(.*?)=(.*)$', re.MULTILINE)
+            m = regex.findall(data)
+            for item in m:
+                jsondata[item[0]] = item[1]
+        return jsondata

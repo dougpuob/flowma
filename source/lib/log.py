@@ -21,12 +21,12 @@ class logger_format(logging.Formatter):
     }
 
     def blue(self, text: str) -> str:
-        newtext: str = self._BLUE_ + text + self._RESET_
-        return newtext
+        new_text: str = self._BLUE_ + text + self._RESET_
+        return new_text
 
     def red(self, text: str) -> str:
-        newtext: str = self._RED_ + text + self._RESET_
-        return newtext
+        new_text: str = self._RED_ + text + self._RESET_
+        return new_text
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)
@@ -40,7 +40,6 @@ class logger_format(logging.Formatter):
         logger = logging.getLogger()
         logger.addHandler(screen)
         logger.setLevel(logging.INFO)
-
         return logger
 
 

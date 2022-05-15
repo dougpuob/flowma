@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
+import re
+
+from .log import logger
 from .define import os_kind
 from .define import os_helper
 
@@ -138,6 +141,7 @@ class osdp_path():
                     ext_name_list: list = [],
                     prefix: str = None,
                     recurs: bool = False) -> list:
+
         found_list: list = []
         root_path = os.path.abspath(root_path)
         for dirname, subdir_list, file_list in os.walk(root_path,
@@ -153,6 +157,37 @@ class osdp_path():
                     is_end_matched = file.endswith(ext_name)
                     if is_end_matched:
                         break
+
+                if is_start_matched and is_end_matched:
+                    abspath = os.path.join(root_path, dirname, file)
+                    normpath = os.path.normpath(abspath)
+                    found_list.append(normpath)
+
+        return found_list
+
+    def explore_dir_re(self,
+                       root_path,
+                       ext_name_list: list = [],
+                       regex_pattern: str = None,
+                       recurs: bool = False) -> list:
+
+        found_list: list = []
+        root_path = os.path.abspath(root_path)
+        for dirname, subdir_list, file_list in os.walk(root_path,
+                                                       topdown=False):
+            for file in file_list:
+                is_start_matched = True
+                is_end_matched = True
+
+                for ext_name in ext_name_list:
+                    is_end_matched = file.endswith(ext_name)
+                    if is_end_matched:
+                        break
+
+                if regex_pattern and is_end_matched:
+                    filename = os.path.basename(file)
+                    result = re.match(regex_pattern, filename)
+                    is_start_matched = (result is not None)
 
                 if is_start_matched and is_end_matched:
                     abspath = os.path.join(root_path, dirname, file)

@@ -14,7 +14,6 @@ class result():
 
 class process():
 
-    ret: result = result()
     proc = None
 
     def __init__(self) -> None:
@@ -25,6 +24,7 @@ class process():
             workdir: str = os.getcwd(),
             timeout: int = None) -> result:
         try:
+            ret: result = result()
             cmdargs = [program]
             cmdargs.extend(arguments)
             logging.info('cmdargs={}'.format(cmdargs))
@@ -32,7 +32,7 @@ class process():
             self.proc = subprocess.Popen(cmdargs,
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE,
-                                         shell=False,
+                                         shell=True,
                                          cwd=workdir)
             try:
                 outs, errs = self.proc.communicate(timeout)
@@ -40,36 +40,36 @@ class process():
                 stdout = outs.decode('utf-8', errors="ignore")
                 stdout = stdout.replace('\r', '')
                 stdout_lines = stdout.split('\n')
-                self.ret.stdout.extend(stdout_lines)
+                ret.stdout.extend(stdout_lines)
 
                 stderr = errs.decode('utf-8', errors="ignore")
                 stdout = stderr.replace('\r', '')
                 stderr_lines = stderr.split('\n')
-                self.ret.stderr.extend(stderr_lines)
+                ret.stderr.extend(stderr_lines)
 
-                self.ret.errcode = self.proc.returncode
+                ret.errcode = self.proc.returncode
 
             except subprocess.TimeoutExpired as Err:
                 logging.exception(Err)
-                self.ret.errcode = 100000
-                self.ret.stderr.append(Err)
+                ret.errcode = 100000
+                ret.stderr.append(Err)
                 self.proc.kill()
 
             except Exception as Err:
                 logging.exception(Err)
-                self.ret.errcode = 100000
-                self.ret.stderr.append(Err)
+                ret.errcode = 100000
+                ret.stderr.append(Err)
                 self.proc.kill()
 
         except subprocess.TimeoutExpired as Err:
             logging.exception(Err)
-            self.ret.errcode = 100001
-            self.ret.stderr.append(Err)
+            ret.errcode = 100001
+            ret.stderr.append(Err)
 
         except Exception as Err:
             logging.exception(Err)
-            self.ret.errcode = 100002
-            self.ret.stderr.append(Err)
+            ret.errcode = 100002
+            ret.stderr.append(Err)
 
         finally:
-            return self.ret
+            return ret

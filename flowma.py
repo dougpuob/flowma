@@ -2,7 +2,7 @@
 
 from source.lib.define import msvc_edition, msvc_version
 from source.flowma.cmdparser import command_parser
-from source.toolchain.msbuild import vcvars
+from source.toolchain.msbuild import msvc_information, vcvars
 from source.lib.log import logger_format
 from source.lib.log import logger
 
@@ -48,6 +48,10 @@ if __name__ == '__main__':
     logger.error('error.................')
 
     vcvar = vcvars()
-    found = vcvar.find_vcvars(msvc_version.vs2022, msvc_edition.community)
+    for msvc in vcvar.msvc_info_list:
+        msvc: msvc_information = msvc
+        for jsondata in msvc.vcvars_jsons:
+            logger.info('-------------------------------------------------------------------')
+            logger.info(jsondata)
 
     print('')
