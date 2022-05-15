@@ -60,27 +60,20 @@ class msvc_information():
             self.version = msvc_version.vs2015
 
 
-class vcvars():
+class msvc_vcvars():
     msvc_info_list: list
 
     logger = None
     logfmt: logger_format
     exec: process
     path: osdp_path
+    vswhere: str
 
     def __init__(self) -> None:
         self.logfmt = logger_format()
         self.exec = process()
         self.path = osdp_path()
-
-        # Visual Studio 2022
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\vsdevcmd\ext\vcvars.bat
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\vsdevcmd\ext\vcvars\vcvars140.bat
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsamd64_x86.bat
-        # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsx86_amd64.bat
+        self.vswhere = r'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
 
         msvc_info_list = self._find_msvc()
         self.msvc_info_list = self._find_vcvars(msvc_info_list)
@@ -93,8 +86,7 @@ class vcvars():
     def _find_msvc(self):
         msvc_info_list: list = []
 
-        vswhere_loc = r'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
-        retrs: result = self.exec.run(vswhere_loc, ['-format', 'json'])
+        retrs: result = self.exec.run(self.vswhere, ['-format', 'json'])
         if 0 == retrs.errcode:
             data = config().toCLASS(str(' '.join(retrs.stdout)))
             for item in data:
