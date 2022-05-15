@@ -30,6 +30,8 @@ jobs:
         pip install psutil
         pip install pytest-cov
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        apt-get --yes install ninja-build
+        apt-get --yes install cmake
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -86,6 +88,9 @@ jobs:
         pip install ssh2-python
         pip install psutil
         pip install pytest-cov
+        brew install cmake
+        brew install ninja
+        brew install llvm
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
