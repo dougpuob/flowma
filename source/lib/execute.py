@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 import locale
 import logging
 import subprocess
@@ -21,18 +22,20 @@ class process():
     def run(self, program: str,
             arguments: list = [],
             workdir: str = os.getcwd(),
+            env: json = None,
             timeout: int = None) -> result:
         try:
             ret: result = result()
             cmdargs = [program]
             cmdargs.extend(arguments)
-            logging.info('cmdargs={}'.format(cmdargs))
+            logging.debug('cmdargs={}'.format(cmdargs))
 
             proc = subprocess.Popen(cmdargs,
-                                         stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE,
-                                         shell=True,
-                                         cwd=workdir)
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE,
+                                    shell=True,
+                                    cwd=workdir,
+                                    env=env)
             try:
                 loc_data = locale.getlocale()
 

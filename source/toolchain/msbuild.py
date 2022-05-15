@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-import json
+
 import os
 import re
+import json
 
+from ..lib.define import cpu_architecture
 from ..lib.define import msvc_edition, msvc_version, config
 from ..lib.path import osdp_path
 from ..lib.log import logger_format
@@ -38,17 +40,18 @@ class msvc_information():
         self.vcvars_files = []
         self.subdir_list = []
         self.vcvars_jsons = []
+
         self.displayName = display_name.strip()
         display_name = self.displayName.lower()
 
         if display_name.find('community') >= 0:
-            self.version = msvc_edition.community
+            self.edition = msvc_edition.community
         elif display_name.find('buildtools') >= 0:
-            self.version = msvc_edition.buildtools
+            self.edition = msvc_edition.buildtools
         elif display_name.find('professional') >= 0:
-            self.version = msvc_edition.professional
+            self.edition = msvc_edition.professional
         elif display_name.find('enterprise') >= 0:
-            self.version = msvc_edition.enterprise
+            self.edition = msvc_edition.enterprise
 
         if display_name.find('2022') >= 0:
             self.version = msvc_version.vs2022
@@ -77,11 +80,47 @@ class msbuild():
 
         msvc_info_list = self._find_msvc()
         self.msvc_info_list = self._find_vcvars(msvc_info_list)
+
+    def get_supported(self):
+        return self.msvc_info_list
+
+    def dump_vcvars(self,
+                    msvc_edi: msvc_edition,
+                    msvc_ver: msvc_version,
+                    host_cpu: cpu_architecture = cpu_architecture.x86_64,
+                    target_cpu: cpu_architecture = cpu_architecture.x86_64):
+
+        # vcvars32.bat          x86
+        # vcvars64.bat          x64
+        # vcvarsamd64_x86.bat   x64_x86
+        # vcvarsx86_amd64.bat   x86_x64
+
+        vcvarbat = ''
+        if (cpu_architecture.x86_32.value == target_cpu.value) and \
+           (cpu_architecture.x86_32.value == host_cpu.value):
+            vcvarbat = 'vcvars32.bat'
+        elif (cpu_architecture.x86_64.value == target_cpu.value) and \
+             (cpu_architecture.x86_64.value == host_cpu.value):
+            vcvarbat = 'vcvars64.bat'
+        elif (cpu_architecture.x86_64.value == host_cpu.value) and \
+             (cpu_architecture.x86_32.value == target_cpu.value):
+            vcvarbat = 'vcvarsamd64_x86.bat'
+        elif (cpu_architecture.x86_32.value == host_cpu.value) and\
+             (cpu_architecture.x86_64.value == target_cpu.value):
+            vcvarbat = 'vcvarsx86_amd64.bat'
+        else:
+            vcvarbat = 'vcvars64.bat'
+
         for msvc_info in self.msvc_info_list:
             msvc_info: msvc_information = msvc_info
-            for vcvar_file in msvc_info.vcvars_files:
-                jsondata = self._dump_vcvars(vcvar_file)
-                msvc_info.vcvars_jsons.append(jsondata)
+            if (msvc_info.edition.value == msvc_edi.value) and \
+               (msvc_info.version.value == msvc_ver.value):
+                for vcvar_file in msvc_info.vcvars_files:
+                    basename = os.path.basename(vcvarbat)
+                    if basename == vcvarbat:
+                        jsondata = self._dump_vcvars(vcvar_file)
+                        return jsondata
+        return None
 
     def _find_msvc(self):
         msvc_info_list: list = []
@@ -103,20 +142,20 @@ class msbuild():
 
                 msvc_info_list.append(msvc_info)
 
-                textfmt = self._logfmt.blue('productPath')
-                logger.info(textfmt + '={0}'.format(msvc_info.productPath))
+                # textfmt = self._logfmt.blue('productPath')
+                # logger.info(textfmt + '={0}'.format(msvc_info.productPath))
 
-                textfmt = self._logfmt.blue('displayName')
-                logger.info(textfmt + '={0}'.format(msvc_info.displayName))
+                # textfmt = self._logfmt.blue('displayName')
+                # logger.info(textfmt + '={0}'.format(msvc_info.displayName))
 
-                textfmt = self._logfmt.blue('buildVersion')
-                logger.info(textfmt + '={0}'.format(msvc_info.buildVersion))
+                # textfmt = self._logfmt.blue('buildVersion')
+                # logger.info(textfmt + '={0}'.format(msvc_info.buildVersion))
 
-                textfmt = self._logfmt.blue('productLineVersion')
-                logger.info(textfmt + '={0}'.format(msvc_info.productLineVersion))
+                # textfmt = self._logfmt.blue('productLineVersion')
+                # logger.info(textfmt + '={0}'.format(msvc_info.productLineVersion))
 
-                textfmt = self._logfmt.blue('installationPath')
-                logger.info(textfmt + '={0}'.format(msvc_info.installationPath))
+                # textfmt = self._logfmt.blue('installationPath')
+                # logger.info(textfmt + '={0}'.format(msvc_info.installationPath))
 
         return msvc_info_list
 
@@ -137,9 +176,9 @@ class msbuild():
                     item.vcvars_files.extend(file_list1)
                     found_count += len(item.vcvars_files)
 
-            for vcvar_file in item.vcvars_files:
-                file_field = self._logfmt.blue('File')
-                logger.info(file_field + '={0}'.format(vcvar_file))
+            # for vcvar_file in item.vcvars_files:
+            #     file_field = self._logfmt.blue('File')
+            #     logger.info(file_field + '={0}'.format(vcvar_file))
 
         return msvc_info_list
 
@@ -155,4 +194,5 @@ class msbuild():
             m = regex.findall(data)
             for item in m:
                 jsondata[item[0]] = item[1]
+
         return jsondata

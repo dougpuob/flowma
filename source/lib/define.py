@@ -58,7 +58,7 @@ class cpu_bits(Enum):
     _64bit = 2
 
 
-class cpu_arch(Enum):
+class cpu_architecture(Enum):
     unknown = 0
 
     x86_default = 1000
@@ -66,6 +66,8 @@ class cpu_arch(Enum):
     x86_64 = x86_default + 2
 
     arm = 2000
+    arm_32 = arm + 1
+    arm_64 = arm + 2
 
     riscv = 3000
 
