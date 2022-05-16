@@ -77,26 +77,36 @@ class flowma_build():
     def get_capability(self):
         capability = {}
 
-        capability['ninja'] = True
-        capability['gcc'] = True
-        capability['clang'] = True
-        capability['llvm']['clang-format'] = True
-        capability['llvm']['clang-tidy'] = True
+        capability['ninja'] = 0
+        capability['gcc'] = 0
+        capability['clang'] = 0
+        capability['clang-format'] = 0
+        capability['clang-tidy'] = 0
+        capability['conan'] = 0
+        capability['cmake'] = 0
 
-        capability['msvc']['2017']['buildtools'] = True
-        capability['msvc']['2017']['community'] = True
-        capability['msvc']['2017']['professional'] = True
-        capability['msvc']['2017']['enterprise'] = True
+        capability['choco'] = 0
+        capability['brew'] = 0
+        capability['apt'] = 0
 
-        capability['msvc']['2019']['buildtools'] = True
-        capability['msvc']['2019']['community'] = True
-        capability['msvc']['2019']['professional'] = True
-        capability['msvc']['2019']['enterprise'] = True
+        capability['curl'] = 0
+        capability['wget'] = 0
+        capability['7zip'] = 0
 
-        capability['msvc']['2022']['buildtools'] = True
-        capability['msvc']['2022']['community'] = True
-        capability['msvc']['2022']['professional'] = True
-        capability['msvc']['2022']['enterprise'] = True
+        capability['msvc']['2017'] = ['buildtools',
+                                      'community',
+                                      'professional',
+                                      'enterprise']
+
+        capability['msvc']['2019'] = ['buildtools',
+                                      'community',
+                                      'professional',
+                                      'enterprise']
+
+        capability['msvc']['2022'] = ['buildtools',
+                                      'community',
+                                      'professional',
+                                      'enterprise']
 
         return capability
 

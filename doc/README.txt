@@ -6,12 +6,14 @@
 - Rust
   Clear -> Config -> Lint -> Build -> Pack -> Test -> Score -> Upload
 
+- C#
+  Clear -> Config -> Lint -> Build -> Pack -> Test -> Score -> Upload
+
 - Python
   Clear -> Lint -> Pack -> Test -> Score -> Upload
 
 - JavaScript
   Clear -> Lint -> Pack -> Test -> Score -> Upload
-
 
 
 ## Score
