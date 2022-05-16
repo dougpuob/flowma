@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import json
 import platform
 
@@ -93,8 +92,10 @@ class config():
 
 class os_helper():
 
+    cur_osk: os_kind
+
     def __init__(self):
-        pass
+        self.cur_osk = self.get_oskind()
 
     def get_oskind(self) -> os_kind:
         os_system = platform.system()
@@ -107,14 +108,20 @@ class os_helper():
         else:
             return os_kind.unknown
 
-    def is_windows(self, osk: os_kind):
-        return osk.value >= os_kind.windows.value or \
-               osk.value < os_kind.windows_max.value
+    def is_windows(self, osk: os_kind = None):
+        if not osk:
+            osk = self.cur_osk
+        return osk.value >= os_kind.windows.value and \
+            osk.value < os_kind.windows_max.value
 
-    def is_linux(self, osk: os_kind):
-        return osk.value >= os_kind.linux.value or \
-               osk.value < os_kind.linux_max.value
+    def is_linux(self, osk: os_kind = None):
+        if not osk:
+            osk = self.cur_osk
+        return osk.value >= os_kind.linux.value and \
+            osk.value < os_kind.linux_max.value
 
-    def is_macos(self, osk: os_kind):
-        return osk.value >= os_kind.macos.value or \
-               osk.value < os_kind.macos_max.value
+    def is_macos(self, osk: os_kind = None):
+        if not osk:
+            osk = self.cur_osk
+        return osk.value >= os_kind.macos.value and \
+            osk.value < os_kind.macos_max.value

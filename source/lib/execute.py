@@ -19,11 +19,31 @@ class process():
     def __init__(self) -> None:
         pass
 
-    def run(self, program: str,
-            arguments: list = [],
-            workdir: str = os.getcwd(),
-            env: json = None,
-            timeout: int = None) -> result:
+    def shell(self,
+              program: str,
+              arguments: list = [],
+              workdir: str = os.getcwd(),
+              env: json = None,
+              timeout: int = None) -> result:
+        return self._exec(program, arguments, workdir, env, timeout,
+                          shell=True)
+
+    def exec(self,
+             program: str,
+             arguments: list = [],
+             workdir: str = os.getcwd(),
+             env: json = None,
+             timeout: int = None) -> result:
+        return self._exec(program, arguments, workdir, env, timeout,
+                          shell=False)
+
+    def _exec(self,
+              program: str,
+              arguments: list = [],
+              workdir: str = os.getcwd(),
+              env: json = None,
+              timeout: int = None,
+              shell: bool = True) -> result:
         try:
             ret: result = result()
             cmdargs = [program]
@@ -33,7 +53,7 @@ class process():
             proc = subprocess.Popen(cmdargs,
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE,
-                                    shell=True,
+                                    shell=shell,
                                     cwd=workdir,
                                     env=env)
             try:

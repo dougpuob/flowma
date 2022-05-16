@@ -55,21 +55,21 @@ class test_msbuild(unittest.TestCase):
                                            msvc_info.version)
             output += '.exe'
 
-        retrs: result = proc.run('cmake',
+        retrs: result = proc.exec('cmake',
                                  ['-G', 'Ninja',
                                   '-B', self.hellocamke_builddir],
                                  workdir=self.hellocamke_projroot,
                                  env=vcvars_env)
         self.assertEqual(retrs.errcode, 0)
 
-        retrs: result = proc.run('cmake',
+        retrs: result = proc.exec('cmake',
                                  ['--build', self.hellocamke_builddir],
                                  workdir=self.hellocamke_projroot,
                                  env=vcvars_env)
         self.assertEqual(retrs.errcode, 0)
         self.assertEqual(os.path.exists(output), True)
 
-        retrs: result = proc.run(output)
+        retrs: result = proc.exec(output)
         self.assertEqual(retrs.errcode, 0)
         self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
 

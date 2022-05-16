@@ -125,7 +125,7 @@ class msbuild():
     def _find_msvc(self):
         msvc_info_list: list = []
 
-        retrs: result = self._exec.run(self._vswhere, ['-format', 'json'])
+        retrs: result = self._exec.exec(self._vswhere, ['-format', 'json'])
         if 0 == retrs.errcode:
             data = config().toCLASS(str(' '.join(retrs.stdout)))
             for item in data:
@@ -186,7 +186,7 @@ class msbuild():
         dirname = os.path.dirname(vcvarsbat_loc)
         basename = os.path.basename(vcvarsbat_loc)
         command = basename + "&&set"
-        retrs: result = self._exec.run(command, [], workdir=dirname)
+        retrs: result = self._exec.exec(command, [], workdir=dirname)
         jsondata = {}
         if 0 == retrs.errcode:
             data = "\n".join(retrs.stdout)

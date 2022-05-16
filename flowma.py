@@ -2,7 +2,7 @@
 
 import os
 
-from source.lib.define import msvc_edition, msvc_version
+from source.lib.define import msvc_edition, msvc_version, os_helper, os_kind
 from source.flowma.cmdparser import command_parser
 from source.toolchain.msbuild import msvc_information, msbuild
 from source.lib.log import logger_format
@@ -50,33 +50,36 @@ if __name__ == '__main__':
     logger.warning('warning.................')
     logger.error('error.................')
 
-    proc: process = process()
+    hellocamke_projroot = os.path.join(os.getcwd(), r'test/testdata/hello-cmake')
+    hellocamke_builddir = os.path.join(os.getcwd(), r'test/testdata/hello-cmake/build')
 
-    msbld = msbuild()
-    supported_msvc_list = msbld.get_supported()
-    for msvc_info in supported_msvc_list:
-        msvc_info: msvc_information = msvc_info
-        msvc_title = cmzfmt.blue('[MSVC]------------------------------')
-        msvc_ver = cmzfmt.blue('msvc_version')
-        msvc_edi = cmzfmt.blue('msvc_edition')
-        vcvarlen = cmzfmt.blue('vcvars_count')
-        logger.info(msvc_title)
-        logger.info(' ' + msvc_ver + '={}'.format(msvc_info.version))
-        logger.info(' ' + msvc_edi + '={}'.format(msvc_info.edition))
-        vcvars_json = msbld.dump_vcvars(msvc_info.edition,
+    envdata = None
+    if os_helper().is_windows():
+        msbld = msbuild()
+        supported_msvc_list = msbld.get_supported()
+        for msvc_info in supported_msvc_list:
+            msvc_info: msvc_information = msvc_info
+            msvc_title = cmzfmt.blue('[MSVC]------------------------------')
+            msvc_ver = cmzfmt.blue('msvc_version')
+            msvc_edi = cmzfmt.blue('msvc_edition')
+            vcvarlen = cmzfmt.blue('vcvars_count')
+            logger.info(msvc_title)
+            logger.info(' ' + msvc_ver + '={}'.format(msvc_info.version))
+            logger.info(' ' + msvc_edi + '={}'.format(msvc_info.edition))
+            envdata = msbld.dump_vcvars(msvc_info.edition,
                                         msvc_info.version)
-        logger.info(' ' + vcvarlen + '={}'.format(len(vcvars_json)))
-        hellocamke_projroot = os.path.join(os.getcwd(), r'test/testdata/hello-cmake')
-        hellocamke_builddir = os.path.join(os.getcwd(), r'test/testdata/hello-cmake/build')
-        retrs: result = proc.run('cmake',
-                                 ['-G', 'Ninja', '-B', hellocamke_builddir],
-                                 workdir=hellocamke_projroot,
-                                 env=vcvars_json)
-        retrs: result = proc.run('cmake',
-                                 ['--build', hellocamke_builddir],
-                                 workdir=hellocamke_projroot,
-                                 env=vcvars_json)
-        print('')
+            logger.info(' ' + vcvarlen + '={}'.format(len(envdata)))
+
+    proc: process = process()
+    retrs: result = proc.exec('cmake',
+                              ['-G', 'Ninja',
+                               '-B', hellocamke_builddir],
+                              workdir=hellocamke_projroot)
+
+    retrs: result = proc.exec('cmake',
+                              ['--build', hellocamke_builddir],
+                              workdir=hellocamke_projroot)
+    print('')
 
     # vcvars_json = msbld.dump_vcvars(msvc_edition.community,
     #                                 msvc_version.vs2022)
