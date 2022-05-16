@@ -25,13 +25,19 @@ class os_kind(Enum):
 
 class msvc_version(Enum):
     unknown = 0
-
-    vs2015 = 1
-    vs2017 = 2
-    vs2019 = 3
-    vs2022 = 4
-
-    last = 5
+    vs97 = 5
+    vs6 = 6
+    vs2002 = 7
+    vs2003 = 7.1
+    vs2005 = 8
+    vs2008 = 9
+    vs2010 = 10
+    vs2012 = 11
+    vs2013 = 12
+    vs2015 = 14
+    vs2017 = 15
+    vs2019 = 16
+    vs2022 = 17
 
 
 class msvc_edition(Enum):
@@ -50,6 +56,18 @@ class build_system(Enum):
     xcode = 2
     makefiles = 3
     ninja = 4
+
+
+class build_compiler(Enum):
+    unknown = 0
+
+    msvc_2015 = msvc_version.vs2015
+    msvc_2017 = msvc_version.vs2017
+    msvc_2019 = msvc_version.vs2019
+    msvc_2022 = msvc_version.vs2022
+
+    gcc = 100
+    clang = 200
 
 
 class cpu_bits(Enum):
@@ -125,3 +143,4 @@ class os_helper():
             osk = self.cur_osk
         return osk.value >= os_kind.macos.value and \
             osk.value < os_kind.macos_max.value
+
