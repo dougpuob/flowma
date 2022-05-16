@@ -39,6 +39,8 @@ class msvc_version(Enum):
     vs2019 = 16
     vs2022 = 17
 
+    last = vs2022
+
 
 class msvc_edition(Enum):
     unknown = 0
@@ -61,13 +63,18 @@ class build_system(Enum):
 class build_compiler(Enum):
     unknown = 0
 
-    msvc_2015 = msvc_version.vs2015
-    msvc_2017 = msvc_version.vs2017
-    msvc_2019 = msvc_version.vs2019
-    msvc_2022 = msvc_version.vs2022
+    msvc = msvc_version.vs97.value
+    msvc_2015 = msvc_version.vs2015.value
+    msvc_2017 = msvc_version.vs2017.value
+    msvc_2019 = msvc_version.vs2019.value
+    msvc_2022 = msvc_version.vs2022.value
+    msvc_last = msvc_2022 + 1
 
     gcc = 100
+    gcc_last = gcc + 1
+
     clang = 200
+    clang_last = clang + 1
 
 
 class cpu_bits(Enum):
