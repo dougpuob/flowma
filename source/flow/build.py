@@ -74,6 +74,32 @@ class flowma_build():
                                          msvc_info.version)
         return envdata
 
+    def get_capability(self):
+        capability = {}
+
+        capability['ninja'] = True
+        capability['gcc'] = True
+        capability['clang'] = True
+        capability['llvm']['clang-format'] = True
+        capability['llvm']['clang-tidy'] = True
+
+        capability['msvc']['2017']['buildtools'] = True
+        capability['msvc']['2017']['community'] = True
+        capability['msvc']['2017']['professional'] = True
+        capability['msvc']['2017']['enterprise'] = True
+
+        capability['msvc']['2019']['buildtools'] = True
+        capability['msvc']['2019']['community'] = True
+        capability['msvc']['2019']['professional'] = True
+        capability['msvc']['2019']['enterprise'] = True
+
+        capability['msvc']['2022']['buildtools'] = True
+        capability['msvc']['2022']['community'] = True
+        capability['msvc']['2022']['professional'] = True
+        capability['msvc']['2022']['enterprise'] = True
+
+        return capability
+
     def probe(self) -> result:
         compiler = self.envdata['CC']
         argument = []
