@@ -6,6 +6,9 @@ import logging
 import subprocess
 
 
+from .define import os_helper, os_kind
+
+
 class result():
     def __init__(self):
         self.errcode = 0
@@ -16,8 +19,10 @@ class result():
 
 class process():
 
+    cur_osk: os_kind
+
     def __init__(self) -> None:
-        pass
+        self.cur_osk = os_helper().get_oskind()
 
     def shell(self,
               program: str,
@@ -34,8 +39,12 @@ class process():
              workdir: str = os.getcwd(),
              env: json = None,
              timeout: int = None) -> result:
-        return self._exec(program, arguments, workdir, env, timeout,
-                          shell=False)
+
+        shell: bool = False
+        if self.cur_osk.value == os_kind.windows.value:
+            shell = True
+
+        return self._exec(program, arguments, workdir, env, timeout, shell)
 
     def _exec(self,
               program: str,
