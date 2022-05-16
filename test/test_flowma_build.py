@@ -40,14 +40,14 @@ class test_flowma_build(unittest.TestCase):
             pytest.skip("clang is unsupported with this system")
         else:
             retrs: result = fmabld.config()
-            self.assertEqual(retrs.errcode, 0)
+            self.assertEqual(retrs.errcode, 0, retrs.stderr)
             if 0 == retrs.errcode:
                 retrs: result = fmabld.build()
-                self.assertEqual(retrs.errcode, 0)
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
 
             retrs: result = self.proc.exec(self.hellocmake_binary)
             if 0 == retrs.errcode:
-                self.assertEqual(retrs.errcode, 0)
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
 
     def test_ninja_gcc(self):
@@ -60,14 +60,14 @@ class test_flowma_build(unittest.TestCase):
             pytest.skip("gcc is unsupported with this system")
         else:
             retrs: result = fmabld.config()
-            self.assertEqual(retrs.errcode, 0)
+            self.assertEqual(retrs.errcode, 0, retrs.stderr)
             if 0 == retrs.errcode:
                 retrs: result = fmabld.build()
-                self.assertEqual(retrs.errcode, 0)
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
 
             retrs: result = self.proc.exec(self.hellocmake_binary)
             if 0 == retrs.errcode:
-                self.assertEqual(retrs.errcode, 0)
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
 
     def test_ninja_msvc(self):
@@ -80,14 +80,14 @@ class test_flowma_build(unittest.TestCase):
             pytest.skip("msvc is unsupported with this system")
         else:
             retrs: result = fmabld.config()
-            self.assertEqual(retrs.errcode, 0)
+            self.assertEqual(retrs.errcode, 0, retrs.stderr)
             if 0 == retrs.errcode:
                 retrs: result = fmabld.build()
-                self.assertEqual(retrs.errcode, 0)
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
 
             retrs: result = self.proc.exec(self.hellocmake_binary)
             if 0 == retrs.errcode:
-                self.assertEqual(retrs.errcode, 0)
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
 
 

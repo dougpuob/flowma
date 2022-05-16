@@ -1,5 +1,6 @@
 .vscode
 .pytest_cache
+build
 *.pyc
 *.bak
-/test/testdata/hello-cmake/build
+*.coverage

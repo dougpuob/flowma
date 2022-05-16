@@ -26,6 +26,7 @@ class flowma_build():
                  bld_compiler: build_compiler,
                  project_dir: str,
                  build_dir: str):
+
         self.envdata = {}
         self.proc = process()
         self.oskind = os_helper().get_oskind()
@@ -40,11 +41,13 @@ class flowma_build():
             self.envdata = os.environ
             self.envdata['CC'] = 'clang'
             self.envdata['CXX'] = 'clang++'
+
         elif ((bld_compiler.value >= build_compiler.gcc.value) and
               (bld_compiler.value < build_compiler.gcc_last.value)):
             self.envdata = os.environ
             self.envdata['CC'] = 'gcc'
             self.envdata['CXX'] = 'g++'
+
         elif ((bld_compiler.value >= build_compiler.msvc.value) and
               (bld_compiler.value < build_compiler.msvc_last.value)):
             self.envdata = self._get_msbuild_envdata()
