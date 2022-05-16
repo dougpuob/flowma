@@ -58,7 +58,7 @@ class flowma_build():
                              msvc_ver: msvc_version = None,
                              msvc_edi: msvc_edition = None):
         if not os_helper().is_windows(self.oskind):
-            return
+            return {}
 
         self.msbld = msbuild()
         supported_msvc_list = self.msbld.get_supported()
