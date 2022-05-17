@@ -6,11 +6,18 @@ class logger_format(logging.Formatter):
 
     _BLUE_: str = "\x1b[38;5;39m"
     _GREY_: str = "\x1b[38;20m"
+    _GREY_: str = "\x1b[38;20m"
+    _GREEN_ = '\x1b[1;36m'
     _YELLOW_: str = "\x1b[33;20m"
     _RED_: str = "\x1b[31;20m"
     _RED_BOLD_: str = "\x1b[31;1m"
     _RESET_: str = "\x1b[0m"
-    _FORMAT_: str = '[%(asctime)s][%(levelname)-8s] %(message)s'
+    _FORMAT_: str = '[%(asctime)s][%(levelname)4s] %(message)s'
+
+    logging.addLevelName(logging.DEBUG, ' DEBG ')
+    logging.addLevelName(logging.ERROR, ' ERRO ')
+    logging.addLevelName(logging.INFO, _GREEN_ + ' INFO ' + _RESET_)
+    logging.addLevelName(logging.WARNING, ' WARN ')
 
     FORMATS = {
         logging.DEBUG: _GREY_ + _FORMAT_ + _RESET_,
@@ -29,6 +36,7 @@ class logger_format(logging.Formatter):
         return new_text
 
     def format(self, record):
+        # log_fmt=[%(asctime)s][%(levelname)-8s] %(message)s
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt, datefmt='%H:%M:%S')
         return formatter.format(record)

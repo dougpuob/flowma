@@ -110,7 +110,17 @@ class flowma_build():
 
         return capability
 
-    def probe(self) -> result:
+    def _probe_cmake(self) -> result:
+        binfile = 'cmake'
+        argument = ['--version']
+        retrs: result = self.proc.exec(binfile,
+                                       argument,
+                                       env=self.envdata)
+        return retrs
+
+    def _probe_cc(self) -> result:
+
+        # Check compiler (CC)
         compiler = self.envdata['CC']
         argument = []
         if ((self.bld_compiler.value >= build_compiler.msvc.value) and
@@ -122,6 +132,20 @@ class flowma_build():
         retrs: result = self.proc.exec(compiler,
                                        argument,
                                        env=self.envdata)
+        return retrs
+
+    def probe(self) -> result:
+
+        # Compiler
+        retrs: result = self._probe_cc()
+        if 0 != retrs.errcode:
+            return retrs
+
+        # CMake
+        retrs: result = self._probe_cmake()
+        if 0 != retrs.errcode:
+            return retrs
+
         return retrs
 
     def config(self) -> result:
