@@ -24,7 +24,7 @@ class os_kind(Enum):
 
 
 class msvc_version(Enum):
-    unknown = 0
+    default = 0
     vs97 = 5
     vs6 = 6
     vs2002 = 7
@@ -63,7 +63,7 @@ class build_system(Enum):
 class build_compiler(Enum):
     unknown = 0
 
-    msvc = msvc_version.vs97.value
+    msvc = msvc_version.default.value
     msvc_2015 = msvc_version.vs2015.value
     msvc_2017 = msvc_version.vs2017.value
     msvc_2019 = msvc_version.vs2019.value

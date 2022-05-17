@@ -3,11 +3,12 @@
 import os
 import logging
 
-from source.lib.define import msvc_edition, msvc_version, os_helper, os_kind
+from source.lib.define import msvc_edition, msvc_version, os_helper, os_kind, build_compiler, build_system
 from source.flowma.cmdparser import command_parser
 from source.toolchain.msbuild import msvc_information, msbuild
 from source.lib.log import logger_format
 from source.lib.execute import process, result
+from source.flow.build import flowma_build
 
 
 class flowma():
@@ -56,38 +57,43 @@ if __name__ == '__main__':
 
     envdata = None
 
-    logging.disable()
+    #logging.disable()
 
-    if os_helper().is_windows():
-        msbld = msbuild()
-        supported_msvc_list = msbld.get_supported()
-        for msvc_info in supported_msvc_list:
-            msvc_info: msvc_information = msvc_info
-            msvc_title = logfmt.blue('[MSVC]------------------------------')
-            msvc_ver = logfmt.blue('msvc_version')
-            msvc_edi = logfmt.blue('msvc_edition')
-            vcvarlen = logfmt.blue('vcvars_count')
-            logging.info(msvc_title)
-            logging.info(' ' + msvc_ver + '={}'.format(msvc_info.version))
-            logging.info(' ' + msvc_edi + '={}'.format(msvc_info.edition))
-            envdata = msbld.dump_vcvars(msvc_info.edition,
-                                        msvc_info.version)
-            logging.info(' ' + vcvarlen + '={}'.format(len(envdata)))
+    # if os_helper().is_windows():
+    #     msbld = msbuild()
+    #     supported_msvc_list = msbld.get_supported()
+    #     for msvc_info in supported_msvc_list:
+    #         msvc_info: msvc_information = msvc_info
+    #         msvc_title = logfmt.blue('[MSVC]------------------------------')
+    #         msvc_ver = logfmt.blue('msvc_version')
+    #         msvc_edi = logfmt.blue('msvc_edition')
+    #         vcvarlen = logfmt.blue('vcvars_count')
+    #         logging.info(msvc_title)
+    #         logging.info(' ' + msvc_ver + '={}'.format(msvc_info.version))
+    #         logging.info(' ' + msvc_edi + '={}'.format(msvc_info.edition))
+    #         envdata = msbld.dump_vcvars(msvc_info.edition,
+    #                                     msvc_info.version)
+    #         logging.info(' ' + vcvarlen + '={}'.format(len(envdata)))
 
-    logging.disable(logging.NOTSET)
 
-    proc: process = process()
-    retrs: result = proc.exec('cmake',
-                              ['-G', 'Ninja',
-                               '-B', hellocamke_builddir],
-                              workdir=hellocamke_projroot)
+    #logging.disable(logging.NOTSET)
 
-    retrs: result = proc.exec('cmake',
-                              ['--build', hellocamke_builddir],
-                              workdir=hellocamke_projroot)
-    print('')
+    # proc: process = process()
+    # retrs: result = proc.exec('cmake',
+    #                           ['-G', 'Ninja',
+    #                            '-B', hellocamke_builddir],
+    #                           workdir=hellocamke_projroot)
+
+    # retrs: result = proc.exec('cmake',
+    #                           ['--build', hellocamke_builddir],
+    #                           workdir=hellocamke_projroot)
 
     # vcvars_json = msbld.dump_vcvars(msvc_edition.community,
     #                                 msvc_version.vs2022)
 
+    flma_bld: flowma_build = flowma_build(build_system.ninja,
+                                          build_compiler.clang,
+                                          hellocamke_projroot,
+                                          hellocamke_builddir)
+    flma_bld.config()
     print('')

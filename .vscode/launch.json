@@ -16,7 +16,7 @@
             //=================================================================
             "module": "pytest",
             //"args": ["-v"],
-            "args": ["-v", "-k", "test_build_hellocmake"],
+            "args": ["-v", "-k", "test_msbuild_msvc"],
             //"args": ["-v", "-k", "test_connect_then_execute_systeminfo_"],
             //-----------------------------------------------------------------
 

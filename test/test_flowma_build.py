@@ -20,7 +20,11 @@ class test_flowma_build(unittest.TestCase):
     proc: process = process()
     hellocmake_projroot = os.path.abspath(r'test/testdata/hello-cmake')
     hellocmake_builddir = os.path.abspath(r'test/testdata/hello-cmake/build')
+    hellocmake_ccmdjson = os.path.join(hellocmake_builddir,
+                                       'compile_commands.json')
     hellocmake_binary = os.path.join(hellocmake_builddir, 'hello_cmake')
+    hellocmake_msvcsln = os.path.join(hellocmake_builddir,
+                                      'hello_cmake.sln')
 
     def setup_method(self, test_method):
         if os.path.exists(self.hellocmake_builddir):
@@ -44,6 +48,8 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 retrs: result = fmabld.build()
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
+                self.assertTrue(os.path.exists(self.hellocmake_ccmdjson),
+                                self.hellocmake_ccmdjson)
 
             retrs: result = self.proc.exec(self.hellocmake_binary)
             if 0 == retrs.errcode:
@@ -64,6 +70,8 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 retrs: result = fmabld.build()
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
+                self.assertTrue(os.path.exists(self.hellocmake_ccmdjson),
+                                self.hellocmake_ccmdjson)
 
             retrs: result = self.proc.exec(self.hellocmake_binary)
             if 0 == retrs.errcode:
@@ -84,6 +92,32 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 retrs: result = fmabld.build()
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
+                self.assertTrue(os.path.exists(self.hellocmake_ccmdjson),
+                                self.hellocmake_ccmdjson)
+
+            retrs: result = self.proc.exec(self.hellocmake_binary)
+            if 0 == retrs.errcode:
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
+                self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
+
+    def test_msbuild_msvc(self):
+        fmabld: flowma_build = flowma_build(build_system.msbuild,
+                                            build_compiler.msvc,
+                                            self.hellocmake_projroot,
+                                            self.hellocmake_builddir)
+        retrs: result = fmabld.probe()
+        if 0 != retrs.errcode:
+            pytest.skip("msvc is unsupported with this system")
+        else:
+            retrs: result = fmabld.config()
+            self.assertEqual(retrs.errcode, 0, retrs.stderr)
+            if 0 == retrs.errcode:
+                retrs: result = fmabld.build()
+                self.assertEqual(retrs.errcode, 0, retrs.stderr)
+                self.assertFalse(os.path.exists(self.hellocmake_ccmdjson),
+                                 self.hellocmake_ccmdjson)
+                self.assertTrue(os.path.exists(self.hellocmake_msvcsln),
+                                self.hellocmake_msvcsln)
 
             retrs: result = self.proc.exec(self.hellocmake_binary)
             if 0 == retrs.errcode:

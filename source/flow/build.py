@@ -10,16 +10,27 @@ from ..toolchain.msbuild import msbuild, msvc_information
 
 
 class flowma_build():
+
+    #
+    #
+    #
     oskind: os_kind
     proc: process
     msbld: msbuild
 
-    envdata: json
-
+    #
+    #
+    #
     bld_system: build_system
     bld_compiler: build_compiler
     project_dir: str
     build_dir: str
+
+    #
+    #
+    #
+    envdata: json
+    msvc_info: msvc_information
 
     def __init__(self,
                  bld_system: build_system,
@@ -50,9 +61,28 @@ class flowma_build():
 
         elif ((bld_compiler.value >= build_compiler.msvc.value) and
               (bld_compiler.value < build_compiler.msvc_last.value)):
+            self.msbld = msbuild()
+            self.msvc_info = self._match_msvc_info(bld_compiler)
+            if self.msvc_info:
+                self.bld_compiler = self.msvc_info.version
             self.envdata = self._get_msbuild_envdata()
             self.envdata['CC'] = 'cl'
             self.envdata['CXX'] = 'cl'
+
+    def _match_msvc_info(self, bld_compiler: build_compiler):
+        supported_msvc_list = self.msbld.get_supported()
+        if 0 == len(supported_msvc_list):
+            return None
+
+        if build_compiler.msvc.value == bld_compiler.value:
+            msvc_info: msvc_information = supported_msvc_list[0]
+            bld_compiler = msvc_info.version
+
+        for msvc_info in supported_msvc_list:
+            msvc_info: msvc_information = msvc_info
+            if msvc_info.version.value == bld_compiler.value:
+                return msvc_info
+        return None
 
     def _get_msbuild_envdata(self,
                              msvc_ver: msvc_version = None,
@@ -60,7 +90,6 @@ class flowma_build():
         if not os_helper().is_windows(self.oskind):
             return {}
 
-        self.msbld = msbuild()
         supported_msvc_list = self.msbld.get_supported()
         if 0 == len(supported_msvc_list):
             return None
@@ -153,11 +182,37 @@ class flowma_build():
         if 0 != retrs.errcode:
             return retrs
 
-        retrs: result = self.proc.exec('cmake',
-                                       ['-G', 'Ninja',
-                                        '-B', self.build_dir],
-                                       workdir=self.project_dir,
-                                       env=self.envdata)
+        if self.bld_system.value == build_system.ninja.value:
+            # -DCMAKE_EXPORT_COMPILE_COMMANDS
+            #  This option is implemented only by Makefile Generators and
+            #  the Ninja. It is ignored on other generators.
+            retrs = self.proc.exec('cmake',
+                                   ['-G', 'Ninja',
+                                    '-B', self.build_dir,
+                                    '-DCMAKE_VERBOSE_MAKEFILE=ON',
+                                    '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'],
+                                   workdir=self.project_dir,
+                                   env=self.envdata)
+
+        elif self.bld_system.value == build_system.msbuild.value:
+            MsvcList = {}
+            # Optional [arch] can be "Win64" or "ARM".
+            MsvcList[build_compiler.msvc_2015.value] = 'Visual Studio 14 2015 [arch]'
+            MsvcList[build_compiler.msvc_2017.value] = 'Visual Studio 15 2017 [arch]'
+            MsvcList[build_compiler.msvc_2019.value] = 'Visual Studio 16 2019'
+            MsvcList[build_compiler.msvc_2022.value] = 'Visual Studio 17 2022'
+
+            Generator: str = MsvcList[self.bld_compiler.value]
+            Generator.replace('[arch]', 'Win64')
+
+            retrs = self.proc.exec('cmake',
+                                   ['-G', Generator,
+                                    '-B', self.build_dir,
+                                    '-DCMAKE_VERBOSE_MAKEFILE=ON',
+                                    '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'],
+                                   workdir=self.project_dir,
+                                   env=self.envdata)
+
         return retrs
 
     def build(self) -> result:
