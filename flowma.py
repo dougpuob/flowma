@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import logging
 
 from source.lib.define import msvc_edition, msvc_version, os_helper, os_kind
 from source.flowma.cmdparser import command_parser
 from source.toolchain.msbuild import msvc_information, msbuild
 from source.lib.log import logger_format
-from source.lib.log import logger
 from source.lib.execute import process, result
 
 
@@ -44,31 +44,37 @@ if __name__ == '__main__':
 
     flowma().main()
 
-    cmzfmt = logger_format()
+    logfmt = logger_format()
+    logfmt.initialize()
 
-    logger.info(cmzfmt.blue('information') + 'asdfsdafadf')
-    logger.warning('warning.................')
-    logger.error('error.................')
+    logging.info(logfmt.blue('information') + 'asdfsdafadf')
+    logging.warning('warning.................')
+    logging.error('error.................')
 
     hellocamke_projroot = os.path.join(os.getcwd(), r'test/testdata/hello-cmake')
     hellocamke_builddir = os.path.join(os.getcwd(), r'test/testdata/hello-cmake/build')
 
     envdata = None
+
+    logging.disable()
+
     if os_helper().is_windows():
         msbld = msbuild()
         supported_msvc_list = msbld.get_supported()
         for msvc_info in supported_msvc_list:
             msvc_info: msvc_information = msvc_info
-            msvc_title = cmzfmt.blue('[MSVC]------------------------------')
-            msvc_ver = cmzfmt.blue('msvc_version')
-            msvc_edi = cmzfmt.blue('msvc_edition')
-            vcvarlen = cmzfmt.blue('vcvars_count')
-            logger.info(msvc_title)
-            logger.info(' ' + msvc_ver + '={}'.format(msvc_info.version))
-            logger.info(' ' + msvc_edi + '={}'.format(msvc_info.edition))
+            msvc_title = logfmt.blue('[MSVC]------------------------------')
+            msvc_ver = logfmt.blue('msvc_version')
+            msvc_edi = logfmt.blue('msvc_edition')
+            vcvarlen = logfmt.blue('vcvars_count')
+            logging.info(msvc_title)
+            logging.info(' ' + msvc_ver + '={}'.format(msvc_info.version))
+            logging.info(' ' + msvc_edi + '={}'.format(msvc_info.edition))
             envdata = msbld.dump_vcvars(msvc_info.edition,
                                         msvc_info.version)
-            logger.info(' ' + vcvarlen + '={}'.format(len(envdata)))
+            logging.info(' ' + vcvarlen + '={}'.format(len(envdata)))
+
+    logging.disable(logging.NOTSET)
 
     proc: process = process()
     retrs: result = proc.exec('cmake',

@@ -8,7 +8,6 @@ from ..lib.define import cpu_architecture
 from ..lib.define import msvc_edition, msvc_version, config
 from ..lib.path import osdp_path
 from ..lib.log import logger_format
-from ..lib.log import logger
 from ..lib.execute import process, result
 
 
@@ -143,19 +142,19 @@ class msbuild():
                 msvc_info_list.append(msvc_info)
 
                 # textfmt = self._logfmt.blue('productPath')
-                # logger.info(textfmt + '={0}'.format(msvc_info.productPath))
+                # logging.info(textfmt + '={0}'.format(msvc_info.productPath))
 
                 # textfmt = self._logfmt.blue('displayName')
-                # logger.info(textfmt + '={0}'.format(msvc_info.displayName))
+                # logging.info(textfmt + '={0}'.format(msvc_info.displayName))
 
                 # textfmt = self._logfmt.blue('buildVersion')
-                # logger.info(textfmt + '={0}'.format(msvc_info.buildVersion))
+                # logging.info(textfmt + '={0}'.format(msvc_info.buildVersion))
 
                 # textfmt = self._logfmt.blue('productLineVersion')
-                # logger.info(textfmt + '={0}'.format(msvc_info.productLineVersion))
+                # logging.info(textfmt + '={0}'.format(msvc_info.productLineVersion))
 
                 # textfmt = self._logfmt.blue('installationPath')
-                # logger.info(textfmt + '={0}'.format(msvc_info.installationPath))
+                # logging.info(textfmt + '={0}'.format(msvc_info.installationPath))
 
         return msvc_info_list
 
@@ -178,7 +177,7 @@ class msbuild():
 
             # for vcvar_file in item.vcvars_files:
             #     file_field = self._logfmt.blue('File')
-            #     logger.info(file_field + '={0}'.format(vcvar_file))
+            #     logging.info(file_field + '={0}'.format(vcvar_file))
 
         return msvc_info_list
 

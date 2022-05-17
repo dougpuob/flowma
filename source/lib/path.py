@@ -2,7 +2,6 @@
 import os
 import re
 
-from .log import logger
 from .define import os_kind
 from .define import os_helper
 

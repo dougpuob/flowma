@@ -73,6 +73,8 @@ class process():
                 #     logging.info('locale[{}]={}'.format(loc_index, loc))
                 #     loc_index += 1
 
+                logging.debug('cmdargs={}'.format(cmdargs))
+
                 outs, errs = proc.communicate(timeout)
 
                 stdout = outs.decode(loc_data[-1])

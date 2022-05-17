@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+from faulthandler import disable
 import logging
 
 
 class logger_format(logging.Formatter):
+
+    _LOGGER_ = None
 
     _BLUE_: str = "\x1b[38;5;39m"
     _GREY_: str = "\x1b[38;20m"
@@ -27,6 +30,9 @@ class logger_format(logging.Formatter):
         logging.CRITICAL: _RED_BOLD_ + _FORMAT_ + _RESET_
     }
 
+    def initialize(self):
+        self._LOGGER_ = self.get_logger()
+
     def blue(self, text: str) -> str:
         new_text: str = self._BLUE_ + text + self._RESET_
         return new_text
@@ -49,6 +55,3 @@ class logger_format(logging.Formatter):
         logger.addHandler(screen)
         logger.setLevel(logging.INFO)
         return logger
-
-
-logger = logger_format().get_logger()

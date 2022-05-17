@@ -37,7 +37,7 @@ class test_flowma_build(unittest.TestCase):
                                             self.hellocmake_builddir)
         retrs: result = fmabld.probe()
         if 0 != retrs.errcode:
-            pytest.skip("clang is unsupported with this system")
+            pytest.skip("clang or cmake is unsupported with this system")
         else:
             retrs: result = fmabld.config()
             self.assertEqual(retrs.errcode, 0, retrs.stderr)
@@ -57,7 +57,7 @@ class test_flowma_build(unittest.TestCase):
                                             self.hellocmake_builddir)
         retrs: result = fmabld.probe()
         if 0 != retrs.errcode:
-            pytest.skip("gcc is unsupported with this system")
+            pytest.skip("gcc or cmake is unsupported with this system")
         else:
             retrs: result = fmabld.config()
             self.assertEqual(retrs.errcode, 0, retrs.stderr)
