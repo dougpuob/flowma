@@ -2,7 +2,6 @@
 
 import os
 import re
-import json
 
 from ..lib.define import cpu_architecture
 from ..lib.define import msvc_edition, msvc_version, config

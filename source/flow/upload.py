@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-class clangtidy():
+class upload():
     def __init__(self):
         pass
