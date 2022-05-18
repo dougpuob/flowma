@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 import platform
 
@@ -150,4 +151,33 @@ class os_helper():
             osk = self.cur_osk
         return osk.value >= os_kind.macos.value and \
             osk.value < os_kind.macos_max.value
+
+
+class environment_variables():
+    envdata: json
+
+    def __init__(self) -> None:
+        self.envdata = os.environ
+        self.apply_extra_path()
+
+    def get_default(self) -> json:
+        return os.environ
+
+    def get_applied_envdata(self) -> json:
+        return self.envdata
+
+    def apply_extra_path(self):
+        extra_path: list = [r'C:\Program Files\CMake\bin']
+        path_str = self.envdata['PATH']
+
+        for extra in extra_path:
+            existing = False
+            path_list = path_str.split(';')
+            for item in path_list:
+                if item == extra:
+                    existing = True
+                    break
+            if not existing:
+                path_list.append(extra)
+        self.envdata['PATH'] = ';'.join(path_list)
 

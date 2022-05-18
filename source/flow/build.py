@@ -4,7 +4,7 @@ import json
 
 from ..lib.execute import process, result
 from ..lib.define import build_system, build_compiler, os_helper, os_kind
-from ..lib.define import msvc_edition, msvc_version
+from ..lib.define import msvc_edition, msvc_version, environment_variables
 
 from ..toolchain.msbuild import msbuild, msvc_information
 
@@ -17,6 +17,7 @@ class flowma_build():
     oskind: os_kind
     proc: process
     msbld: msbuild
+    envvars: environment_variables
 
     #
     #
@@ -40,6 +41,7 @@ class flowma_build():
 
         self.envdata = {}
         self.proc = process()
+        self.envvars = environment_variables()
         self.oskind = os_helper().get_oskind()
 
         self.bld_system = bld_system
@@ -49,13 +51,13 @@ class flowma_build():
 
         if ((bld_compiler.value >= build_compiler.clang.value) and
            (bld_compiler.value < build_compiler.clang_last.value)):
-            self.envdata = os.environ
+            self.envdata = self.envvars.get_applied_envdata()
             self.envdata['CC'] = 'clang'
             self.envdata['CXX'] = 'clang++'
 
         elif ((bld_compiler.value >= build_compiler.gcc.value) and
               (bld_compiler.value < build_compiler.gcc_last.value)):
-            self.envdata = os.environ
+            self.envdata = self.envvars.get_applied_envdata()
             self.envdata['CC'] = 'gcc'
             self.envdata['CXX'] = 'g++'
 
