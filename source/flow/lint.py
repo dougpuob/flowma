@@ -36,3 +36,6 @@ class flowma_lint():
 
     def clangformat(self, file: str):
         return self.clangfmt_obj.run(file)
+
+    def clangtidy(self, file: str):
+        return self.clangtidy_obj.run(file)
