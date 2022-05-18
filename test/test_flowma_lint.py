@@ -44,7 +44,7 @@ class test_flowma_lint(unittest.TestCase):
         fmalint: flowma_lint = flowma_lint()
 
         retrs_bld: result = fmabld.probe()
-        retrs_lint: result = fmalint.probe_clangfmt()
+        retrs_lint: result = fmalint.probe()
         if 0 != retrs_bld.errcode:
             pytest.skip("clang or cmake is unsupported with this system")
         elif 0 != retrs_lint.errcode:
