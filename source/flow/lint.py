@@ -34,8 +34,8 @@ class lint_config(CONFIGURATION):
 
 class flowma_lint():
 
-    _clangfmt: clangformat
-    _clangtidy: clangtidy
+    _obj_clangfmt: clangformat
+    _obj_clangtidy: clangtidy
 
     compile_commands_json_path: str
     clang_tidy_config_path: str
@@ -43,26 +43,26 @@ class flowma_lint():
     def __init__(self, config: lint_config):
 
         self.proc = process()
-        self._clangfmt = clangformat()
-        self._clangtidy = clangtidy(config.llvm.compile_commands,
-                                    config.llvm.config.clangtidy)
+        self._obj_clangfmt = clangformat()
+        self._obj_clangtidy = clangtidy(config.llvm.compile_commands,
+                                        config.llvm.config.clangtidy)
 
     def probe(self) -> result:
 
         # clang-format
-        retrs: result = self._clangfmt.probe()
+        retrs: result = self._obj_clangfmt.probe()
         if 0 != retrs.errcode:
             return retrs
 
         # clang-tidy
-        retrs: result = self._clangtidy.probe()
+        retrs: result = self._obj_clangtidy.probe()
         if 0 != retrs.errcode:
             return retrs
 
         return result()
 
     def clangformat(self, file: str):
-        return self._clangfmt.run(file)
+        return self._obj_clangfmt.run(file)
 
     def clangtidy(self, file: str):
-        return self._clangtidy.run(file)
+        return self._obj_clangtidy.run(file)
