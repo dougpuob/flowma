@@ -2,6 +2,7 @@
 import os
 import json
 
+from ..lib.path import osdp_path
 from ..lib.define import os_helper, os_kind
 from ..lib.execute import process, result
 
@@ -15,6 +16,7 @@ class clangformat():
     inplace: bool
 
     # objects
+    _obj_osdp_path: osdp_path
     _obj_proc: process
     _obj_os_helper: os_helper
 
@@ -30,15 +32,16 @@ class clangformat():
                  inplace: bool = True,
                  version: int = 0):
 
+        # objects
+        self._obj_osdp_path = osdp_path()
+        self._obj_proc = process()
+        self._obj_os_helper = os_helper()
+
         # arguments
-        self.config_file = config_file
+        self.config_file = self._obj_osdp_path.normpath(config_file)
         self.style = style
         self.inplace = inplace
         self.version = version
-
-        # objects
-        self._obj_proc = process()
-        self._obj_os_helper = os_helper()
 
         # definitions
         self.oskind = self._obj_os_helper.get_oskind()
@@ -110,9 +113,9 @@ class clangformat():
         # specific style and config
         if 'file' == self.style:
             if os.path.exists(self.config_file):
-                argument.append('-style=file:{}'.format(self.config_file))
+                argument.append('-style=file:"{}"'.format(self.config_file))
         else:
-            argument.append('-style={}'.format(self.style))
+            argument.append('-style="{}"'.format(self.style))
 
         argument.append('{}'.format(source_file_path))
 
@@ -120,4 +123,3 @@ class clangformat():
                                             argument,
                                             env=self.envdata)
         return retrs
-        pass
