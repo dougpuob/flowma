@@ -30,9 +30,10 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         sudo apt-get --yes install ninja-build
         sudo apt-get --yes install cmake
-        sudo apt-get --yes install llvm
-        # sudo apt-get --yes install clang-tidy
-        # sudo apt-get --yes install clang-format
+        sudo apt-get --yes install llvm-14
+        sudo apt-get --yes install clang-14
+        sudo apt-get --yes install clang-tidy-14
+        sudo apt-get --yes install clang-format-14
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -65,7 +66,7 @@ jobs:
         pip install flake8 pytest
         pip install pytest-cov
         choco install ninja -Y
-        choco install llvm -Y
+        choco install llvm --version=14.0.1
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -99,9 +100,7 @@ jobs:
         pip install pytest-cov
         brew install cmake
         brew install ninja
-        brew install llvm
-        # brew install clang-tidy
-        # brew install clang-format
+        brew install llvm@13
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names

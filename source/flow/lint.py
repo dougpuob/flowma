@@ -13,27 +13,20 @@ from ..lib.define import msvc_edition, msvc_version
 
 class lint_config(CONFIGURATION):
 
-    def __init__(self) -> None:
-        pass
-
     class llvm(CONFIGURATION):
 
-        compile_commands: str
-
-        def __init__(self) -> None:
-            pass
+        compile_commands: str = ''
+        specific_version: int = 0
 
         class config(CONFIGURATION):
 
-            clangformat: str
-            clangtidy: str
-
-            def __init__(self) -> None:
-                pass
+            clangformat: str = ''
+            clangtidy: str = ''
 
 
 class flowma_lint():
 
+    _obj_proc: process
     _obj_clangfmt: clangformat
     _obj_clangtidy: clangtidy
 
@@ -42,10 +35,13 @@ class flowma_lint():
 
     def __init__(self, config: lint_config):
 
-        self.proc = process()
-        self._obj_clangfmt = clangformat()
+        self._obj_proc = process()
+        self._obj_clangfmt = clangformat(config.llvm.config.clangtidy,
+                                         version=config.llvm.specific_version)
+
         self._obj_clangtidy = clangtidy(config.llvm.compile_commands,
-                                        config.llvm.config.clangtidy)
+                                        config.llvm.config.clangtidy,
+                                        version=config.llvm.specific_version)
 
     def probe(self) -> result:
 

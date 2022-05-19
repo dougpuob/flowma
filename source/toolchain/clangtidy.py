@@ -4,6 +4,7 @@ import re
 import json
 
 from ..lib.execute import process, result
+from ..lib.define import os_helper, os_kind
 
 
 class clangtidy_assertion():
@@ -91,12 +92,15 @@ class clangtidy():
     clang_tidy_config_path: str
     style: str
     inplace: bool
+    version: int
 
     # objects
-    proc: process
-    parser: clangtidy_assertion_parser
+    _obj_proc: process
+    _obj_parser: clangtidy_assertion_parser
+    _obj_os_helper: os_helper
 
     # others
+    oskind: os_kind
     envdata: json
     lastcmd: list
 
@@ -104,11 +108,13 @@ class clangtidy():
                  clang_tidy_config_path: str,
                  compile_commands_json_path: str = None,
                  style: str = 'file',
-                 inplace: bool = False):
+                 inplace: bool = False,
+                 version: int = 0):
 
-        # definitions
-        self._BINFILE_ = 'clang-tidy'
-        self._EXT_NAMES_ = ['.c', '.cpp', '.cxx', '.m', '.mm']
+        # objects
+        self._obj_os_helper = os_helper()
+        self._obj_proc = process()
+        self._obj_parser = clangtidy_assertion_parser()
 
         # arguments
         self.clang_tidy_config_path = clang_tidy_config_path
@@ -116,9 +122,14 @@ class clangtidy():
         self.style = style
         self.inplace = inplace
 
-        # objects
-        self.proc = process()
-        self.parser = clangtidy_assertion_parser()
+        # definitions
+        self._EXT_NAMES_ = ['.c', '.cpp', '.cxx', '.m', '.mm']
+        self.oskind = self._obj_os_helper.get_oskind()
+        self._BINFILE_ = 'clang-tidy'
+        if 0 != version:
+            if self._obj_os_helper.is_linux(self.oskind) or \
+               self._obj_os_helper.is_macos(self.oskind):
+                self._BINFILE_ = 'clang-tidy' + '-' + str(version)
 
         # others
         self.envdata = os.environ
@@ -126,9 +137,9 @@ class clangtidy():
 
     def probe(self) -> result:
         argument = ['--version']
-        retrs: result = self.proc.exec(self._BINFILE_,
-                                       argument,
-                                       env=self.envdata)
+        retrs: result = self._obj_proc.exec(self._BINFILE_,
+                                            argument,
+                                            env=self.envdata)
         return retrs
 
     # [PSCustomObject] RunWithJsonCompilationDatabase(
@@ -151,7 +162,7 @@ class clangtidy():
             arguments.append('--config-file={}'.format(config))
 
         # execute this command
-        retrs: result = self.proc.exec(self._BINFILE_,
+        retrs: result = self._obj_proc.exec(self._BINFILE_,
                                        arguments,
                                        env=self.envdata)
         return retrs
@@ -182,11 +193,11 @@ class clangtidy():
         # arguments.append('-store-check-profile={}'.format(DIRPATH))
 
         # execute this command
-        retrs: result = self.proc.exec(self._BINFILE_,
+        retrs: result = self._obj_proc.exec(self._BINFILE_,
                                        arguments,
                                        env=self.envdata)
 
-        retrs.data = self.parser.parse('\n'.join(retrs.stdout))
+        retrs.data = self._obj_parser.parse('\n'.join(retrs.stdout))
 
         # update last command
         self.lastcmd.append(self._BINFILE_)

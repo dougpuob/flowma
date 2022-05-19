@@ -15,6 +15,38 @@ from source.lib.define import build_compiler, build_system, os_helper, os_kind
 from source.flow.build import flowma_build
 from source.toolchain.clangtidy import clangtidy, clangtidy_assertion, clangtidy_assertion_parser
 
+hellocmake_projroot = os.path.abspath(r'test/testdata/hello-cmake')
+hellocmake_builddir = os.path.abspath(r'test/testdata/hello-cmake/build')
+
+hellocmake_ccmdjson = os.path.join(hellocmake_builddir,
+                                   'compile_commands.json')
+
+hellocmake_binary = os.path.join(hellocmake_builddir,
+                                 'hello_cmake')
+
+hellocmake_msvcsln = os.path.join(hellocmake_builddir,
+                                  'hello_cmake.sln')
+
+
+def setup_module(module):
+    if os.path.exists(hellocmake_builddir):
+        shutil.rmtree(hellocmake_builddir)
+
+    fmabld: flowma_build = flowma_build(build_system.ninja,
+                                        build_compiler.clang,
+                                        hellocmake_projroot,
+                                        hellocmake_builddir)
+    retrs: result = fmabld.probe()
+    if 0 != retrs.errcode:
+        pytest.skip("clang or cmake is unsupported with this system")
+    else:
+        retrs: result = fmabld.config()
+
+
+def teardown_module(module):
+    if os.path.exists(hellocmake_builddir):
+        shutil.rmtree(hellocmake_builddir)
+
 
 class test_clangtidy_assertion(unittest.TestCase):
 
@@ -63,44 +95,20 @@ Suppressed 38921 warnings (38921 in non-user code).
         self.assertEqual(found_list[1].error_identifier, error_identifier)
         self.assertEqual(len(found_list[1].failure_message), 4)
 
+
 class test_clangtidy(unittest.TestCase):
-
-    hellocmake_projroot = os.path.abspath(r'test/testdata/hello-cmake')
-    hellocmake_builddir = os.path.abspath(r'test/testdata/hello-cmake/build')
-    hellocmake_ccmdjson = os.path.join(hellocmake_builddir,
-                                       'compile_commands.json')
-    hellocmake_binary = os.path.join(hellocmake_builddir, 'hello_cmake')
-    hellocmake_msvcsln = os.path.join(hellocmake_builddir,
-                                      'hello_cmake.sln')
-
-    def setup_method(self, test_method):
-        if os.path.exists(self.hellocmake_builddir):
-            shutil.rmtree(self.hellocmake_builddir)
-
-    def teardown_method(self, test_method):
-        if os.path.exists(self.hellocmake_builddir):
-            shutil.rmtree(self.hellocmake_builddir)
 
     def test_test_clangtidy_main_cpp(self):
 
-        fmabld: flowma_build = flowma_build(build_system.ninja,
-                                            build_compiler.clang,
-                                            self.hellocmake_projroot,
-                                            self.hellocmake_builddir)
-        retrs: result = fmabld.probe()
-        if 0 != retrs.errcode:
-            pytest.skip("clang or cmake is unsupported with this system")
-        else:
-            retrs: result = fmabld.config()
-            self.assertEqual(retrs.errcode, 0, retrs.stderr)
+        source_path = os.path.join(hellocmake_projroot, 'main.cpp')
+        config_path = os.path.join(hellocmake_projroot, '_clang-tidy')
+        compiler_database_path = os.path.join(hellocmake_builddir,
+                                              'compile_commands.json')
+        obj_clang_tidy = clangtidy(config_path, compiler_database_path)
+        retrs: result = obj_clang_tidy.run(source_path, config_path)
 
-        source_path = os.path.join(self.hellocmake_projroot, 'main.cpp')
-        config_path = os.path.join(self.hellocmake_projroot, '_clang-tidy')
-        compiler_database_path = os.path.join(self.hellocmake_builddir, 'compile_commands.json')
-        tidy = clangtidy(config_path,
-                         compiler_database_path)
-        retrs: result = tidy.run(source_path, config_path)
         self.assertEqual(retrs.errcode, 0)
+        self.assertEqual(len(retrs.data), 2)
 
 
 if __name__ == '__main__':
