@@ -36,7 +36,7 @@ class flowma_lint():
     def __init__(self, config: lint_config):
 
         self._obj_proc = process()
-        self._obj_clangfmt = clangformat(config.llvm.config.clangtidy,
+        self._obj_clangfmt = clangformat(config.llvm.config.clangformat,
                                          version=config.llvm.specific_version)
 
         self._obj_clangtidy = clangtidy(config.llvm.compile_commands,

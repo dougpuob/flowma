@@ -60,8 +60,18 @@ class test_flowma_lint(unittest.TestCase):
     lint_cfg: lint_config = lint_config()
     lint_cfg.llvm.specific_version = 14
     lint_cfg.llvm.compile_commands = hellocmake_ccmdjson
-    lint_cfg.llvm.config.clangtidy = hellocmake_cfgtidy
-    lint_cfg.llvm.config.clangformat = hellocmake_cfgftm
+
+    cfgfmt: str = os.path.join(hellocmake_projroot,
+                               'config',
+                               str(lint_cfg.llvm.specific_version),
+                               '_clang-format_llvm')
+    lint_cfg.llvm.config.clangformat = cfgfmt
+
+    cfgtidy: str = os.path.join(hellocmake_projroot,
+                                'config',
+                                str(lint_cfg.llvm.specific_version),
+                                '_clang-tidy')
+    lint_cfg.llvm.config.clangtidy = cfgtidy
 
     def test_lint_clangfmt_ninja_clang(self):
         obj_flowma_lint: flowma_lint = flowma_lint(self.lint_cfg)

@@ -16,7 +16,7 @@
             //=================================================================
             "module": "pytest",
             //"args": ["-v"],
-            "args": ["-v", "-k", "test_test_clangtidy_main_cpp"],
+            "args": ["-v", "-k", "test_lint_clangfmt_ninja_clang"],
             //"args": ["-v", "-k", "test_connect_then_execute_systeminfo_"],
             //-----------------------------------------------------------------
 
