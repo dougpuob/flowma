@@ -10,7 +10,7 @@ class clangformat():
     _BIN_FILE: str
 
     # input arguments
-    clang_fmt_config_path: str
+    config_file: str
     style: str
     inplace: bool
 
@@ -25,13 +25,13 @@ class clangformat():
     envdata: json
 
     def __init__(self,
-                 clang_fmt_config_path: str,
+                 config_file: str,
                  style: str = 'file',
                  inplace: bool = True,
                  version: int = 0):
 
         # arguments
-        self.clang_fmt_config_path = clang_fmt_config_path
+        self.config_file = config_file
         self.style = style
         self.inplace = inplace
         self.version = version
@@ -64,13 +64,19 @@ class clangformat():
                                             env=self.envdata)
         return retrs
 
-    def run(self, file_path: str):
+    def run(self, source_file_path: str):
+        ret = None
         if not self.probe_success:
-            return self.probe_except
+            ret = self.probe_except
+        if 12 == self.version:
+            ret = self.run_v12(source_file_path)
+        elif 13 == self.version:
+            ret = self.run_v13(source_file_path)
+        elif 14 >= self.version:
+            ret = self.run_v14(source_file_path)
+        return ret
 
-        return self.run_v12(file_path)
-
-    def run_v12(self, file_path: str):
+    def run_v12(self, source_file_path: str):
         argument = []
 
         # Change in-place
@@ -78,17 +84,40 @@ class clangformat():
             argument.append('-i')
 
         # specific a style
-        argument.append('-style={}'.format(self.style))
+        if 'file' == self.style:
+            argument.append('-style=file')
+        else:
+            argument.append('-style={}'.format(self.style))
 
-        argument.append('{}'.format(file_path))
+        argument.append('{}'.format(source_file_path))
 
-        retrs: result = self._obj_proc.exec('clang-format',
+        retrs: result = self._obj_proc.exec(self._BIN_FILE,
                                             argument,
                                             env=self.envdata)
         return retrs
 
     def run_v13(self, file_path: str):
-        pass
+        return self.run_v12(file_path)
 
-    def run_v14(self, file_path: str):
+    def run_v14(self, source_file_path: str):
+        # -style=file:<format_file_path>
+        argument = []
+
+        # Change in-place
+        if self.inplace:
+            argument.append('-i')
+
+        # specific style and config
+        if 'file' == self.style:
+            if os.path.exists(self.config_file):
+                argument.append('-style=file:{}'.format(self.config_file))
+        else:
+            argument.append('-style={}'.format(self.style))
+
+        argument.append('{}'.format(source_file_path))
+
+        retrs: result = self._obj_proc.exec(self._BIN_FILE,
+                                            argument,
+                                            env=self.envdata)
+        return retrs
         pass
