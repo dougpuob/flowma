@@ -58,7 +58,7 @@ def teardown_module(module):
 class test_flowma_lint(unittest.TestCase):
 
     lint_cfg: lint_config = lint_config()
-    lint_cfg.llvm.specific_version = 13
+    lint_cfg.llvm.specific_version = 14
     lint_cfg.llvm.compile_commands = hellocmake_ccmdjson
     lint_cfg.llvm.config.clangtidy = hellocmake_cfgtidy
     lint_cfg.llvm.config.clangformat = hellocmake_cfgftm
