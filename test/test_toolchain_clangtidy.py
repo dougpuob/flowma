@@ -107,7 +107,8 @@ class test_clangtidy(unittest.TestCase):
         obj_clang_tidy = clangtidy(config_path, compiler_database_path)
         retrs: result = obj_clang_tidy.run(source_path, config_path)
 
-        self.assertEqual(retrs.errcode, 0)
+        self.assertEqual(retrs.errcode, 0, retrs.stderr)
+        self.assertEqual(retrs.errcode, 0, retrs.stdout)
         self.assertEqual(len(retrs.data), 2)
 
 
