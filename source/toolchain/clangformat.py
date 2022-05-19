@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import os
 import json
 
@@ -8,7 +9,7 @@ from ..lib.execute import process, result
 
 
 class clangformat():
-    _BIN_FILE: str
+    _BINFILE_: str
 
     # input arguments
     config_file: str
@@ -45,7 +46,7 @@ class clangformat():
 
         # definitions
         self.oskind = self._obj_os_helper.get_oskind()
-        self._BIN_FILE = 'clang-format'
+        self._BINFILE_ = 'clang-format'
         if 0 != version:
             if self._obj_os_helper.is_linux(self.oskind) or \
                self._obj_os_helper.is_macos(self.oskind):
@@ -62,7 +63,7 @@ class clangformat():
 
     def probe(self) -> result:
         argument = ['--version']
-        retrs: result = self._obj_proc.exec(self._BIN_FILE,
+        retrs: result = self._obj_proc.exec(self._BINFILE_,
                                             argument,
                                             env=self.envdata)
         return retrs
@@ -94,7 +95,7 @@ class clangformat():
 
         argument.append('{}'.format(source_file_path))
 
-        retrs: result = self._obj_proc.exec(self._BIN_FILE,
+        retrs: result = self._obj_proc.exec(self._BINFILE_,
                                             argument,
                                             env=self.envdata)
         return retrs
@@ -119,7 +120,8 @@ class clangformat():
 
         argument.append('{}'.format(source_file_path))
 
-        retrs: result = self._obj_proc.exec(self._BIN_FILE,
+        retrs: result = self._obj_proc.exec(self._BINFILE_,
                                             argument,
                                             env=self.envdata)
+        print(self._BINFILE_ + ' ' + ' '.join(argument))
         return retrs
