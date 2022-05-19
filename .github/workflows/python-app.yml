@@ -30,8 +30,8 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         sudo apt-get --yes install ninja-build
         sudo apt-get --yes install cmake
-        gpg --keyserver pgpkeys.mit.edu --recv-key 15CF4D18AF4F7421
-        gpg -a --export 1C1E55A728CBC482 | sudo apt-key add -
+        sudo gpg --keyserver pgpkeys.mit.edu --recv-key 15CF4D18AF4F7421
+        sudo gpg -a --export 1C1E55A728CBC482 | sudo apt-key add -
         sudo add-apt-repository 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
         sudo apt-get update
         sudo apt-get --yes install llvm-14
