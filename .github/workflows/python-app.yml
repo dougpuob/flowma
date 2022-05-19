@@ -46,8 +46,8 @@ jobs:
     - name: Collect environment information
       run: |
         clang --version
-        # clang-tidy --version
-        # clang-format --version
+        clang-tidy-14 --version
+        clang-format-14 --version
     - name: Test with pytest
       run: |
         python -m pytest -v --cov .
