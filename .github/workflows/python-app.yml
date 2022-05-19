@@ -30,6 +30,9 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         sudo apt-get --yes install ninja-build
         sudo apt-get --yes install cmake
+        sudo deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main
+        sudo deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main
+        sudo apt-get update
         sudo apt-get --yes install llvm-14
         sudo apt-get --yes install clang-14
         sudo apt-get --yes install clang-tidy-14
