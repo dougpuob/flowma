@@ -31,6 +31,8 @@ jobs:
         sudo apt-get --yes install ninja-build
         sudo apt-get --yes install cmake
         sudo apt-get --yes install llvm
+        sudo apt-get --yes install clang-tidy
+        sudo apt-get --yes install clang-format
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
