@@ -1,31 +1,128 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import json
 
 from ..lib.execute import process, result
 
 
+class clangtidy_assertion():
+    _START_: int
+    _END_: int
+
+    raw_text: str = ''
+    file_path: str = ''
+    line_number: int = 0
+    column_number: int = 0
+    error_message: str = ''
+    error_identifier: str = ''
+    failure_message: list = []
+
+
+class clangtidy_assertion_parser():
+    assertion_list: list
+    _PATTERN_: str
+
+    def find_assertion_blocks(self, raw_text: str):
+        pattern = re.compile(self._PATTERN_, re.MULTILINE)
+        m = pattern.findall(raw_text)
+        return m
+
+    # def parse_assertion(self, raw_text: str):
+    #     m = re.match(self._PATTERN_, raw_text)
+    #     return m
+
+    def parse(self, stdout_rawtext: str):
+        stdout_rawtext = stdout_rawtext.strip()
+        self.assertion_list.clear()
+
+        block_list = self.find_assertion_blocks(stdout_rawtext)
+
+        for block in block_list:
+            if 5 == len(block):
+                new_assert = clangtidy_assertion()
+                new_assert.file_path = block[0]
+                new_assert.line_number = int(block[1])
+                new_assert.column_number = int(block[2])
+                new_assert.error_message = block[3]
+                new_assert.error_identifier = block[4]
+
+                start_text = (new_assert.file_path + ':' +
+                              str(new_assert.line_number) + ':' +
+                              str(new_assert.column_number) + ':')
+                new_assert._START_ = stdout_rawtext.find(start_text)
+                new_assert._END_ = stdout_rawtext.find(new_assert.error_identifier,
+                                                       new_assert._START_)
+                if new_assert._END_ != -1:
+                    new_assert._END_ += len(new_assert.error_identifier)
+
+                self.assertion_list.append(new_assert)
+
+        next_index = 0
+        for assertion in self.assertion_list:
+            next_index += 1
+            assertion: clangtidy_assertion = assertion
+            start_curr: int = assertion._END_
+            start_next: int = 0
+
+            if len(self.assertion_list) > next_index:
+                start_next = self.assertion_list[next_index]._START_
+            else:
+                start_next = len(stdout_rawtext)
+
+            failure_text = stdout_rawtext[start_curr:start_next].strip()
+            assertion.failure_message = failure_text.split('\n')
+
+        return self.assertion_list
+
+    def __init__(self):
+        self.assertion_list = []
+        self._PATTERN_ = r'([:\\\w\/\.\-\ ]+):(\d+):(\d+): (.+) (\[[\w\-,\.]+\])'
+
+
 class clangtidy():
-    style: str
-    inplace: bool
 
-    proc: process
-
+    # definitions
     _BINFILE_: str
     _EXT_NAMES_: list
 
-    def __init__(self,
-                 style: str = 'file',
-                 inplace: bool = True):
+    # arguments
+    compile_commands_json_path: str
+    clang_tidy_config_path: str
+    style: str
+    inplace: bool
 
+    # objects
+    proc: process
+    parser: clangtidy_assertion_parser
+
+    # others
+    envdata: json
+    lastcmd: list
+
+    def __init__(self,
+                 clang_tidy_config_path: str,
+                 compile_commands_json_path: str = None,
+                 style: str = 'file',
+                 inplace: bool = False):
+
+        # definitions
+        self._BINFILE_ = 'clang-tidy'
+        self._EXT_NAMES_ = ['.c', '.cpp', '.cxx', '.m', '.mm']
+
+        # arguments
+        self.clang_tidy_config_path = clang_tidy_config_path
+        self.compile_commands_json_path = compile_commands_json_path
         self.style = style
         self.inplace = inplace
 
+        # objects
         self.proc = process()
+        self.parser = clangtidy_assertion_parser()
 
-        self._BINFILE_ = 'clang-tidy'
-        self._EXT_NAMES_ = ['.c', '.cpp', '.cxx', '.m', '.mm']
+        # others
         self.envdata = os.environ
+        self.lastcmd = []
 
     def probe(self) -> result:
         argument = ['--version']
@@ -39,46 +136,60 @@ class clangtidy():
         # [bool]$Recursive,
         # [bool]$TryToFix) {
 
-    def run_compilation_database_json(self,
-            dir_path: str,
-            compile_commands_json_path: str,
-            recurse: bool = False,
-            fix: bool = False):
-        return result()
+    def explain_config(self,
+                       config: str):
 
+        self.lastcmd.clear()
+
+        arguments: list = []
+        arguments.append('--explain-config')
+
+        if os.path.exists(self.compile_commands_json_path):
+            arguments.extend(['-p', self.compile_commands_json_path])
+
+        if os.path.exists(config):
+            arguments.append('--config-file={}'.format(config))
+
+        # execute this command
+        retrs: result = self.proc.exec(self._BINFILE_,
+                                       arguments,
+                                       env=self.envdata)
+        return retrs
 
     def run(self,
-            dir_path: str,
-            recurse: bool = False,
+            source_file_path: str,
+            config: str,
             fix: bool = False):
-        return result()
 
+        self.lastcmd.clear()
 
-class clangtidy_assertion():
+        arguments: list = []
 
-    raw_text: str
-    file_path: str
-    line_number: int
-    column_number: int
-    error_message: str
-    error_identifier: str
-    failure_message: str
+        if os.path.exists(self.compile_commands_json_path):
+            arguments.extend(['-p', self.compile_commands_json_path])
 
-    def parse_assertion(self, raw_text: str):
-        pattern = r'([:\\\w\/\.\-\ ]+):(\d+):(\d+): (.+) (\[[\w\-,\.]+\])'
-        m = re.match(pattern, raw_text)
-        return m
+        arguments.append(source_file_path)
 
-    def __init__(self,
-                 assertion_message_block: str,
-                 faliure_message: str):
+        if os.path.exists(config):
+            arguments.append('--config-file={}'.format(config))
+        else:
+            arguments.append('--checks="{}"'.format(config))
 
-        result = self.parse_assertion(assertion_message_block)
-        if 6 == len(result.regs):
-            self.raw_text = result[0]
-            self.file_path = result[1]
-            self.line_number = int(result[2])
-            self.column_number = int(result[3])
-            self.error_message = result[4]
-            self.error_identifier = result[5]
-            self.failure_message = faliure_message
+        if fix:
+            arguments.append('-fix')
+
+        # arguments.append('-enable-check-profile')
+        # arguments.append('-store-check-profile={}'.format(DIRPATH))
+
+        # execute this command
+        retrs: result = self.proc.exec(self._BINFILE_,
+                                       arguments,
+                                       env=self.envdata)
+
+        retrs.data = self.parser.parse('\n'.join(retrs.stdout))
+
+        # update last command
+        self.lastcmd.append(self._BINFILE_)
+        self.lastcmd.extend(arguments)
+
+        return retrs

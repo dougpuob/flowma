@@ -97,7 +97,7 @@ class cpu_architecture(Enum):
     riscv = 3000
 
 
-class config():
+class CONFIGURATION():
     def _try(self, o):
         try:
             return o.__dict__

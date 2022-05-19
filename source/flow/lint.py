@@ -5,37 +5,64 @@ import json
 from source.toolchain.clangformat import clangformat
 from source.toolchain.clangtidy import clangtidy
 
+from ..lib.define import CONFIGURATION
 from ..lib.execute import process, result
 from ..lib.define import build_system, build_compiler, os_helper, os_kind
 from ..lib.define import msvc_edition, msvc_version
 
 
+class lint_config(CONFIGURATION):
+
+    def __init__(self) -> None:
+        pass
+
+    class llvm(CONFIGURATION):
+
+        compile_commands: str
+
+        def __init__(self) -> None:
+            pass
+
+        class config(CONFIGURATION):
+
+            clangformat: str
+            clangtidy: str
+
+            def __init__(self) -> None:
+                pass
+
+
 class flowma_lint():
 
-    clangfmt_obj: clangformat
-    clangtidy_obj: clangtidy
+    _clangfmt: clangformat
+    _clangtidy: clangtidy
 
-    def __init__(self):
+    compile_commands_json_path: str
+    clang_tidy_config_path: str
+
+    def __init__(self, config: lint_config):
+
         self.proc = process()
-        self.clangfmt_obj = clangformat()
-        self.clangtidy_obj = clangtidy()
+        self._clangfmt = clangformat()
+        self._clangtidy = clangtidy(config.llvm.compile_commands,
+                                    config.llvm.config.clangtidy)
 
     def probe(self) -> result:
 
         # clang-format
-        retrs: result = self.clangfmt_obj.probe()
+        retrs: result = self._clangfmt.probe()
         if 0 != retrs.errcode:
             return retrs
 
         # clang-tidy
-        retrs: result = self.clangtidy_obj.probe()
+        retrs: result = self._clangtidy.probe()
         if 0 != retrs.errcode:
             return retrs
 
         return result()
 
     def clangformat(self, file: str):
-        return self.clangfmt_obj.run(file)
+        return self._clangfmt.run(file)
 
     def clangtidy(self, file: str):
-        return self.clangtidy_obj.run(file)
+        return self._clangtidy.run(file)

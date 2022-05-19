@@ -16,7 +16,7 @@
             //=================================================================
             "module": "pytest",
             //"args": ["-v"],
-            "args": ["-v", "-k", "test_assertion_1"],
+            "args": ["-v", "-k", "test_lint_clangfmt_ninja_clang"],
             //"args": ["-v", "-k", "test_connect_then_execute_systeminfo_"],
             //-----------------------------------------------------------------
 

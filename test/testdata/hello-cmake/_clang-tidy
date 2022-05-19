@@ -1,0 +1,13 @@
+---
+Checks: >
+    bugprone-*,
+    -bugprone-exception-escape,
+    cert-*,
+    misc-*,
+    abseil-*,
+    readability-*,
+    modernize-*,
+    -modernize-use-trailing-return-type,
+    performance-*,
+    portability-*
+...

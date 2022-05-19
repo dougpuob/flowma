@@ -4,7 +4,7 @@ import os
 import re
 
 from ..lib.define import cpu_architecture
-from ..lib.define import msvc_edition, msvc_version, config
+from ..lib.define import msvc_edition, msvc_version, CONFIGURATION
 from ..lib.path import osdp_path
 from ..lib.log import logger_format
 from ..lib.execute import process, result
@@ -125,7 +125,7 @@ class msbuild():
 
         retrs: result = self._exec.exec(self._vswhere, ['-format', 'json'])
         if 0 == retrs.errcode:
-            data = config().toCLASS(str(' '.join(retrs.stdout)))
+            data = CONFIGURATION().toCLASS(str(' '.join(retrs.stdout)))
             for item in data:
                 msvc_info = msvc_information(item.displayName)
 
