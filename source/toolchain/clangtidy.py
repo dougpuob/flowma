@@ -179,8 +179,8 @@ class clangtidy():
 
         # execute this command
         retrs: result = self._obj_proc.exec(self._BINFILE_,
-                                       arguments,
-                                       env=self.envdata)
+                                            arguments,
+                                            env=self.envdata)
         return retrs
 
     def run(self,
@@ -210,13 +210,15 @@ class clangtidy():
 
         # execute this command
         retrs: result = self._obj_proc.exec(self._BINFILE_,
-                                       arguments,
-                                       env=self.envdata)
+                                            arguments,
+                                            env=self.envdata)
 
         retrs.data = self._obj_parser.parse('\n'.join(retrs.stdout))
 
         # update last command
         self.lastcmd.append(self._BINFILE_)
         self.lastcmd.extend(arguments)
+
+        print(self.lastcmd)
 
         return retrs
