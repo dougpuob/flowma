@@ -98,7 +98,7 @@ Suppressed 38921 warnings (38921 in non-user code).
 
 class test_clangtidy(unittest.TestCase):
 
-    def test_test_clangtidy_main_cpp(self):
+    def test_clangtidy_v14_main_cpp(self):
 
         source_path = os.path.join(hellocmake_projroot, 'main.cpp')
         config_path = os.path.join(hellocmake_projroot, '_clang-tidy')
@@ -109,7 +109,7 @@ class test_clangtidy(unittest.TestCase):
         self.assertEqual(True, os.path.exists(config_path), config_path)
         self.assertEqual(True, os.path.exists(compiler_database_path), compiler_database_path)
 
-        obj_clang_tidy = clangtidy(config_path, compiler_database_path)
+        obj_clang_tidy = clangtidy(config_path, compiler_database_path, version=14)
         retrs: result = obj_clang_tidy.run(source_path, config_path)
         if 0 != retrs.errcode:
             print("retrs.errcode={}".format(retrs.errcode))
