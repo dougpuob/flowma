@@ -55,6 +55,10 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
+            else:
+                print("retrs.errcode={}".format(retrs.errcode))
+                print("retrs.stdout={}".format(retrs.stdout))
+                print("retrs.stderr={}".format(retrs.stderr))
 
     def test_ninja_gcc(self):
         fmabld: flowma_build = flowma_build(build_system.ninja,
@@ -77,6 +81,10 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
+            else:
+                print("retrs.errcode={}".format(retrs.errcode))
+                print("retrs.stdout={}".format(retrs.stdout))
+                print("retrs.stderr={}".format(retrs.stderr))
 
     def test_ninja_msvc(self):
         fmabld: flowma_build = flowma_build(build_system.ninja,
@@ -99,6 +107,10 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
+            else:
+                print("retrs.errcode={}".format(retrs.errcode))
+                print("retrs.stdout={}".format(retrs.stdout))
+                print("retrs.stderr={}".format(retrs.stderr))
 
     def test_msbuild_msvc(self):
         fmabld: flowma_build = flowma_build(build_system.msbuild,
@@ -123,6 +135,10 @@ class test_flowma_build(unittest.TestCase):
             if 0 == retrs.errcode:
                 self.assertEqual(retrs.errcode, 0, retrs.stderr)
                 self.assertEqual("".join(retrs.stdout), 'Hello CMake!')
+            else:
+                print("retrs.errcode={}".format(retrs.errcode))
+                print("retrs.stdout={}".format(retrs.stdout))
+                print("retrs.stderr={}".format(retrs.stderr))
 
 
 if __name__ == '__main__':
