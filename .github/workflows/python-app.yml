@@ -105,7 +105,7 @@ jobs:
         pip install pytest-cov
         brew install cmake
         brew install ninja
-        brew install llvm@13
+        brew install llvm@14
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
