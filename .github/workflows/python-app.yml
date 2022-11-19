@@ -36,17 +36,18 @@ jobs:
         sudo apt-get --yes install llvm-14
         sudo apt-get --yes install clang-14
         sudo apt-get --yes install clang-tidy-14
-        sudo apt-get --yes install clang-format-14
+        sudo apt-get --yes install clang-format-14        
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Collect environment information
+    - name: clang-tidy-14
       run: |
-        clang --version
         clang-tidy-14 --version
+    - name: clang-format-14
+      run: |
         clang-format-14 --version
     - name: Test with pytest
       run: |
@@ -76,11 +77,12 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Collect environment information
+    - name: clang-tidy-14
       run: |
-        clang --version
-        # clang-tidy --version
-        # clang-format --version
+        clang-tidy --version
+    - name: clang-format-14
+      run: |
+        clang-format --version
     - name: Test with pytest
       run: |
         python -m pytest -v --cov .
@@ -110,11 +112,12 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Collect environment information
+    - name: clang-tidy-14
       run: |
-        clang --version
-        # clang-tidy --version
-        # clang-format --version
+        clang-tidy --version
+    - name: clang-format-14
+      run: |
+        clang-format --version
     - name: Test with pytest
       run: |
         python -m pytest -v --cov .
