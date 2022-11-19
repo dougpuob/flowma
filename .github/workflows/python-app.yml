@@ -105,7 +105,7 @@ jobs:
         pip install pytest-cov
         brew install cmake
         brew install ninja
-        brew install llvm@14
+        #brew install llvm@14
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -114,10 +114,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Collect information for clang-tidy
       run: |
-        clang-tidy-14 --version
+        clang-tidy --version
     - name: Collect information for clang-format
       run: |
-        clang-format-14 --version
+        clang-format --version
     - name: Test with pytest
       run: |
         python -m pytest -v --cov .
