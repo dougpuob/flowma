@@ -114,10 +114,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Collect information for clang-tidy
       run: |
-        clang-tidy --version
+        clang-tidy-14 --version
     - name: Collect information for clang-format
       run: |
-        clang-format --version
+        clang-format-14 --version
     - name: Test with pytest
       run: |
         python -m pytest -v --cov .

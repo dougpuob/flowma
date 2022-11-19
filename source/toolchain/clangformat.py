@@ -51,9 +51,10 @@ class clangformat():
         # definitions
         self.oskind = self._obj_os_helper.get_oskind()
         self._BINFILE_ = 'clang-format'
-        if self._obj_os_helper.is_linux(self.oskind) or \
-           self._obj_os_helper.is_macos(self.oskind):
-            self._BINFILE_ += '-' + str(version)
+        if 0 != version:
+            if self._obj_os_helper.is_linux(self.oskind) or \
+               self._obj_os_helper.is_macos(self.oskind):
+                self._BINFILE_ += '-' + str(version)
 
         # others
         self.envdata = os.environ
