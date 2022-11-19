@@ -106,8 +106,8 @@ jobs:
         brew install cmake
         brew install ninja
         brew install llvm@14
-        ls -la $(brew --prefix llvm)/bin/clang-format
-        ls -la $(brew --prefix llvm)/bin/clang-tidy        
+        ls -la $(brew --prefix llvm)/bin/clang-format*
+        ls -la $(brew --prefix llvm)/bin/clang-tidy*
         ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format-14"
         ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy-14"
     - name: Lint with flake8
