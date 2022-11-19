@@ -17,7 +17,8 @@
             "module": "pytest",
             "python": "C:\\Python310\\python.exe",
             //"args": ["-v"],
-            "args": ["-v", "-k", "test_lint_clangfmt_ninja_v15"],
+            //"args": ["-v", "-k", "test_lint_clangfmt_ninja_v15"],
+            "args": ["-v", "-k", "test_test_clangtidy_main_cpp"],
             //"args": ["-v", "-k", "test_connect_then_execute_systeminfo_"],
             //-----------------------------------------------------------------
 

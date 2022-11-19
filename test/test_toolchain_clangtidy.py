@@ -104,6 +104,11 @@ class test_clangtidy(unittest.TestCase):
         config_path = os.path.join(hellocmake_projroot, '_clang-tidy')
         compiler_database_path = os.path.join(hellocmake_builddir,
                                               'compile_commands.json')
+
+        self.assertEqual(True, os.path.exists(source_path), source_path)
+        self.assertEqual(True, os.path.exists(config_path), config_path)
+        self.assertEqual(True, os.path.exists(compiler_database_path), compiler_database_path)
+
         obj_clang_tidy = clangtidy(config_path, compiler_database_path)
         retrs: result = obj_clang_tidy.run(source_path, config_path)
 
