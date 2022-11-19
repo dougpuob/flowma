@@ -12,6 +12,19 @@ _gitlab/flowma.toml
 config/flowma.toml
 
 
+```
+pip install toml
+pip install pytest
+pip install pytest-cov
+pip install pytest-html
+pip install pytest-sugar
+
+```
+
+
+```
+python -m pytest -v --cov . -k test_lint_clangfmt_ninja_clang
+```
 
 
 

@@ -33,15 +33,21 @@ class flowma_lint():
     compile_commands_json_path: str
     clang_tidy_config_path: str
 
+    # member_variables
+    _ver_clangfmt: int
+    _ver_clangtdy: int
+
     def __init__(self, config: lint_config):
 
         self._obj_proc = process()
         self._obj_clangfmt = clangformat(config.llvm.config.clangformat,
                                          version=config.llvm.specific_version)
+        self._ver_clangfmt = config.llvm.specific_version
 
         self._obj_clangtidy = clangtidy(config.llvm.compile_commands,
                                         config.llvm.config.clangtidy,
                                         version=config.llvm.specific_version)
+        self._ver_clangtdy = config.llvm.specific_version
 
     def probe(self) -> result:
 
@@ -56,6 +62,15 @@ class flowma_lint():
             return retrs
 
         return result()
+
+    def check_version(self) -> bool:
+        ver_clangfmt = self._obj_clangfmt.get_version()
+        ver_clangtdy = self._obj_clangtidy.get_version()
+
+        identical: bool = self._ver_clangfmt == ver_clangfmt[0] and \
+            self._ver_clangtdy == ver_clangtdy[0]
+
+        return identical
 
     def clangformat(self, file: str):
         return self._obj_clangfmt.run(file)

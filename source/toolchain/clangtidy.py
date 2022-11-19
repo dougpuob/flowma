@@ -19,7 +19,6 @@ class clangtidy_assertion():
     error_identifier: str = ''
     failure_message: list = []
 
-
 class clangtidy_assertion_parser():
     assertion_list: list
     _PATTERN_: str
@@ -104,6 +103,9 @@ class clangtidy():
     envdata: json
     lastcmd: list
 
+    # member variables
+    queried_version: list
+
     def __init__(self,
                  clang_tidy_config_path: str,
                  compile_commands_json_path: str = None,
@@ -135,6 +137,9 @@ class clangtidy():
         self.envdata = os.environ
         self.lastcmd = []
 
+        # member variables
+        self.queried_version = self.get_version()
+
     def probe(self) -> result:
         argument = ['--version']
         retrs: result = self._obj_proc.exec(self._BINFILE_,
@@ -142,10 +147,21 @@ class clangtidy():
                                             env=self.envdata)
         return retrs
 
-    # [PSCustomObject] RunWithJsonCompilationDatabase(
-        # [string]$StartDirPath,
-        # [bool]$Recursive,
-        # [bool]$TryToFix) {
+    def get_version(self) -> list:
+        ver_info = [0, 0, 0]
+        retrs: result = self.probe()
+        if 0 == retrs.errcode:
+            # PS > clang-tidy.exe --version
+            # LLVM (http://llvm.org/):
+            #   LLVM version 15.0.0
+            #   Optimized build.
+            #   Default target: x86_64-pc-windows-msvc
+            #   Host CPU: znver2
+            vers_tuple = re.findall("(\\d+)\\.(\\d+)\\.(\\d+)", ''.join(retrs.stdout))
+            ver_info[0] = int(vers_tuple[0][0])
+            ver_info[1] = int(vers_tuple[0][1])
+            ver_info[2] = int(vers_tuple[0][2])
+        return ver_info
 
     def explain_config(self,
                        config: str):
