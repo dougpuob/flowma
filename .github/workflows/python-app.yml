@@ -105,11 +105,13 @@ jobs:
         pip install pytest-cov
         brew install cmake
         brew install ninja
-        brew install llvm@14
+        #brew install llvm@14
+        brew info llvm
+        brew info --json=v1 llvm | jq .
         ls -la $(brew --prefix llvm)
         ls -la $(brew --prefix llvm)/bin
-        ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format-14"
-        ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy-14"
+        #ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format-14"
+        #ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy-14"
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
