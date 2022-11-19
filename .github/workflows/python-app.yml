@@ -36,7 +36,7 @@ jobs:
         sudo apt-get --yes install llvm-14
         sudo apt-get --yes install clang-14
         sudo apt-get --yes install clang-tidy-14
-        sudo apt-get --yes install clang-format-14        
+        sudo apt-get --yes install clang-format-14
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -105,19 +105,21 @@ jobs:
         pip install pytest-cov
         brew install cmake
         brew install ninja
-        #brew install llvm@14
+        brew install llvm@14
+        ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format-14"
+        ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy-14"
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Collect information for clang-tidy
+    - name: Collect information for clang-tidy-14
       run: |
-        clang-tidy --version
-    - name: Collect information for clang-format
+        clang-tidy-14 --version
+    - name: Collect information for clang-format-14
       run: |
-        clang-format --version
+        clang-format-14 --version
     - name: Test with pytest
       run: |
         python -m pytest -v --cov .
