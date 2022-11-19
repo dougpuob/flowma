@@ -128,10 +128,9 @@ class clangtidy():
         self._EXT_NAMES_ = ['.c', '.cpp', '.cxx', '.m', '.mm']
         self.oskind = self._obj_os_helper.get_oskind()
         self._BINFILE_ = 'clang-tidy'
-        if 0 != version:
-            if self._obj_os_helper.is_linux(self.oskind) or \
-               self._obj_os_helper.is_macos(self.oskind):
-                self._BINFILE_ += '-' + str(version)
+        if self._obj_os_helper.is_linux(self.oskind) or \
+           self._obj_os_helper.is_macos(self.oskind):
+            self._BINFILE_ += '-' + str(version)
 
         # others
         self.envdata = os.environ
