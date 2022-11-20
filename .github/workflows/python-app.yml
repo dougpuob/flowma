@@ -108,6 +108,7 @@ jobs:
         #brew install llvm@14
         pip install clang-tools
         clang-tools --install 14
+        find -L /usr -name "stdarg.h" -type f
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
