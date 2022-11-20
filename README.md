@@ -23,6 +23,8 @@ pip install pytest-sugar
 
 
 ```
+python -m pytest -v --cov .
+python -m pytest -v --cov . --html=report.html 
 python -m pytest -v --cov . -k test_lint_clangfmt_ninja_clang
 ```
 

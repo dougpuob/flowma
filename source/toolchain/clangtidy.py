@@ -209,7 +209,7 @@ class clangtidy():
         # arguments.append('-store-check-profile={}'.format(DIRPATH))
 
         # Skip header files
-        arguments.append('-header-filter=.*')
+        arguments.append('-header-filter=^.*\\.h$')
 
         # execute this command
         retrs: result = self._obj_proc.exec(self._BINFILE_,
