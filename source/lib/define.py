@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import json
 import platform
 
@@ -157,6 +158,8 @@ class environment_variables():
     envdata: json
 
     def __init__(self) -> None:
+        self._obj_os_helper = os_helper()
+
         self.envdata = os.environ
         self.apply_extra_path()
 
@@ -167,17 +170,32 @@ class environment_variables():
         return self.envdata
 
     def apply_extra_path(self):
-        extra_path: list = [r'C:\Program Files\CMake\bin']
-        path_str = self.envdata['PATH']
 
+        dir_cmake: str = None
+        dir_python: str = None
+
+        split_token: str = ''
+        if self._obj_os_helper.is_windows():
+            split_token = ';'
+            dir_cmake = r'C:\Program Files\CMake\bin'
+        else:
+            split_token = ':'
+            dir_python = os.path.dirname(sys.executable)
+
+        try_extra_path: list = [dir_cmake, dir_python]
+        extra_path: list = []
+        for item in try_extra_path:
+            if item is not None:
+                extra_path.append(item)
+
+        path_str = self.envdata['PATH']
         for extra in extra_path:
             existing = False
-            path_list = path_str.split(';')
+            path_list = path_str.split(split_token)
             for item in path_list:
                 if item == extra:
                     existing = True
                     break
             if not existing:
                 path_list.append(extra)
-        self.envdata['PATH'] = ';'.join(path_list)
-
+        self.envdata['PATH'] = split_token.join(path_list)

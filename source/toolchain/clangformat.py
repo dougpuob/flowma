@@ -5,7 +5,7 @@ import re
 import json
 
 from ..lib.path import osdp_path
-from ..lib.define import os_helper, os_kind
+from ..lib.define import os_helper, os_kind, environment_variables
 from ..lib.execute import process, result
 
 
@@ -21,6 +21,7 @@ class clangformat():
     _obj_osdp_path: osdp_path
     _obj_proc: process
     _obj_os_helper: os_helper
+    _obj_env: environment_variables
 
     # variables
     oskind: os_kind
@@ -41,6 +42,7 @@ class clangformat():
         self._obj_osdp_path = osdp_path()
         self._obj_proc = process()
         self._obj_os_helper = os_helper()
+        self._obj_env = environment_variables()
 
         # arguments
         self.config_file = self._obj_osdp_path.normpath(config_file)
@@ -57,7 +59,7 @@ class clangformat():
                 self._BINFILE_ += '-' + str(version)
 
         # others
-        self.envdata = os.environ
+        self.envdata = self._obj_env.apply_extra_path()
         retrs: result = self.probe()
         self.probe_success = (0 == retrs.errcode)
 

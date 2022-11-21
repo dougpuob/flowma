@@ -4,7 +4,7 @@ import re
 import json
 
 from ..lib.execute import process, result
-from ..lib.define import os_helper, os_kind
+from ..lib.define import os_helper, os_kind, environment_variables
 
 
 class clangtidy_assertion():
@@ -18,6 +18,7 @@ class clangtidy_assertion():
     error_message: str = ''
     error_identifier: str = ''
     failure_message: list = []
+
 
 class clangtidy_assertion_parser():
     assertion_list: list
@@ -97,6 +98,7 @@ class clangtidy():
     _obj_proc: process
     _obj_parser: clangtidy_assertion_parser
     _obj_os_helper: os_helper
+    _obj_env: environment_variables
 
     # others
     oskind: os_kind
@@ -117,6 +119,7 @@ class clangtidy():
         self._obj_os_helper = os_helper()
         self._obj_proc = process()
         self._obj_parser = clangtidy_assertion_parser()
+        self._obj_env = environment_variables()
 
         # arguments
         self.clang_tidy_config_path = clang_tidy_config_path
